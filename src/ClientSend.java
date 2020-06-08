@@ -9,17 +9,15 @@ public class ClientSend implements Runnable{
     private DataOutputStream output;
     private Socket client;
     private boolean isRunning;
-    private String name;
 
     public ClientSend(Socket client,String name) {
         isRunning = true;
         this.client = client;
-        this.name = name;
         this.console = new BufferedReader(new InputStreamReader(System.in));
         try {
             output = new DataOutputStream(client.getOutputStream());
             //发送名称
-            send(name);
+            //send(name);
         } catch (IOException e) {
             System.out.println("Client error");
             this.release();
@@ -67,6 +65,7 @@ public class ClientSend implements Runnable{
         this.isRunning = false;
         try {
             this.output.close();
+            this.console.close();
             this.client.close();
         } catch (IOException e) {
             e.printStackTrace();

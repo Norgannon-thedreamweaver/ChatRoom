@@ -9,6 +9,7 @@ public class ServerThread implements Runnable{
     private DataOutputStream output;
     private Socket client;
     private boolean isRunning;
+    private User user;
     private String name;
 
     public ServerThread(Socket client) {
@@ -18,10 +19,19 @@ public class ServerThread implements Runnable{
             input = new DataInputStream(client.getInputStream());
             output = new DataOutputStream(client.getOutputStream());
             //获取名称
-            this.name = receive();
-
+            while(true){
+                this.send("请输入用户名");
+                String username=this.receive();
+                this.send("请输入密码");
+                String password=this.receive();
+                if(UserList.getUserList().UserLogin(username,password)==1){
+                    this.name=username;
+                    this.user=UserList.getUserList().getUserByName(name);
+                    break;
+                }
+            }
             System.out.println(this.name+"来了");
-            this.send("您来辣");
+            this.send(this.name+",您来辣");
             this.sendOthers(this.name+"来了",true);
         }catch(Exception e) {
             release();
@@ -49,11 +59,7 @@ public class ServerThread implements Runnable{
             release();
         }
     }
-    /**
-     * 群聊：获取自己的消息，发给其他人
-     * 私聊：约定数据格式：@xxx:msg
-     * @param msg
-     */
+
     public void sendOthers(String msg,boolean isSys) {
         boolean isPrivate = msg.startsWith("@");
         ArrayList<ServerThread> all=Server.getServerThread();
@@ -81,7 +87,7 @@ public class ServerThread implements Runnable{
             }
         }
     }
-    //关闭资源
+    //关闭
     public void release() {
         this.isRunning = false;
         try {
@@ -91,7 +97,7 @@ public class ServerThread implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //退出
+        //溜
         Server.getServerThread().remove(this);
         sendOthers(this.name+"下线了！",true);
     }
