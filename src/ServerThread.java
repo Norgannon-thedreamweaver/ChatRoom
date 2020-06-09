@@ -11,7 +11,7 @@ public class ServerThread implements Runnable{
     private DataOutputStream output;
     private Socket client;
     private boolean isRunning;
-    private User user;
+    private User user=null;
     private String name;
 
     public ServerThread(Socket client) {
@@ -21,20 +21,7 @@ public class ServerThread implements Runnable{
             input = new DataInputStream(client.getInputStream());
             output = new DataOutputStream(client.getOutputStream());
             //获取名称
-            while(true){
-                this.send("请输入用户名");
-                String username=this.receive();
-                this.send("请输入密码");
-                String password=this.receive();
-                if(UserList.getUserList().UserLogin(username,password)==1){
-                    this.name=username;
-                    this.user=UserList.getUserList().getUserByName(name);
-                    break;
-                }
-            }
             System.out.println(this.name+"来了");
-            this.send(this.name+",您来辣");
-            this.sendOthers(this.name+"来了",true);
         }catch(Exception e) {
             release();
         }
@@ -91,7 +78,7 @@ public class ServerThread implements Runnable{
     }
     //关闭
     public void release() {
-        sendOthers(this.name+"下线了！",true);
+        //sendOthers(this.name+"下线了！",true);
         this.isRunning = false;
         try {
             this.input.close();
@@ -111,6 +98,7 @@ public class ServerThread implements Runnable{
         new Thread(room).start();
         Server.getServerThread().remove(this);
         this.isRunning=false;
+        this.send("create-"+room.RID);
     }
     public void joinRoom(int RID){
         Room room=Server.getRoomByRID(RID);
@@ -118,9 +106,10 @@ public class ServerThread implements Runnable{
             room.addMember(this.client,this.input,this.output,this.name);
             Server.getServerThread().remove(this);
             this.isRunning=false;
+            this.send("join-success");
         }
         else{
-            this.send("未找到对应的房间");
+            this.send("no-room-found");
         }
     }
     public void joinRoom(int RID,String password){
@@ -130,33 +119,52 @@ public class ServerThread implements Runnable{
                 room.addMember(this.client,this.input,this.output,this.name);
                 Server.getServerThread().remove(this);
                 this.isRunning=false;
+                this.send("join-success");
             }
             else
-                this.send("密码错误");
+                this.send("wrong-password");
         }
         else{
-            this.send("未找到对应的房间");
+            this.send("no-room-found");
+        }
+    }
+    public void Login(String username,String password){
+        if(UserList.getUserList().UserLogin(username,password)==1){
+            this.send("login-success");
+            this.name=username;
+            this.user=UserList.getUserList().getUserByName(name);
+        }
+        else{
+            this.send("login-fail");
         }
     }
     public void Command(String msg){
         String[] str=msg.split(" ");
-        if(str.length==3&&str[0].equals("join")&&str[1].equals("-public")&&Pattern.matches("^[0-9]+$",str[2])){
-            joinRoom(Integer.parseInt(str[2]));
+        if(user==null){
+            if(str.length==3&&str[0].equals("login")){
+                Login(str[1],str[2]);
+            }
         }
-        if(str.length==4&&str[0].equals("join")&&str[1].equals("-private")&&Pattern.matches("^[0-9]+$",str[3])){
-            joinRoom(Integer.parseInt(str[3]),str[2]);
+        else{
+            if(str.length==3&&str[0].equals("join")&&str[1].equals("-public")&&Pattern.matches("^[0-9]+$",str[2])){
+                joinRoom(Integer.parseInt(str[2]));
+            }
+            if(str.length==4&&str[0].equals("join")&&str[1].equals("-private")&&Pattern.matches("^[0-9]+$",str[3])){
+                joinRoom(Integer.parseInt(str[3]),str[2]);
+            }
+            if(str.length==2&&str[0].equals("create")&&str[1].equals("-public")){
+                createRoom(false,null);
+            }
+            if(str.length==3&&str[0].equals("create")&&str[1].equals("-private")){
+                createRoom(true,str[2]);
+            }
         }
-        if(str.length==2&&str[0].equals("create")&&str[1].equals("-public")){
-            createRoom(false,null);
-        }
-        if(str.length==3&&str[0].equals("create")&&str[1].equals("-private")){
-            createRoom(true,str[2]);
-        }
+
+
     }
     @Override
     public void run() {
         while(isRunning) {
-            this.send("请输入指令");
             String msg = receive();
             if(!msg.equals("")) {
                 Command(msg);

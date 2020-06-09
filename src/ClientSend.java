@@ -5,13 +5,31 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class ClientSend implements Runnable{
+    private static ClientSend self=null;
     private BufferedReader console;
     private DataOutputStream output;
     private Socket client;
     private boolean isRunning;
+    private boolean isLogin;
+    private boolean isRoom;
+
+    public boolean isRoom() {
+        return isRoom;
+    }
+    public void setRoom(boolean room) {
+        isRoom = room;
+    }
+    public boolean isLogin() {
+        return isLogin;
+    }
+    public void setLogin(boolean login) {
+        isLogin = login;
+    }
 
     public ClientSend(Socket client,String name) {
         isRunning = true;
+        isLogin=false;
+        isRoom=false;
         this.client = client;
         this.console = new BufferedReader(new InputStreamReader(System.in));
         try {
@@ -22,10 +40,29 @@ public class ClientSend implements Runnable{
             System.out.println("Client error");
             this.release();
         }
+        self=this;
     }
-
+    public static ClientSend getClientSend(){
+        return self;
+    }
     @Override
-    public void run() {
+    public synchronized void run() {
+        while(!isLogin){
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("send login");
+        while(!isRoom){
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("send room");
         while(isRunning) {
             String msg = this.getStringFromConsole();
             if(!msg.equals("")) {
@@ -37,7 +74,7 @@ public class ClientSend implements Runnable{
     /**
      * 发送消息
      */
-    private void send(String msg) {
+    public synchronized void send(String msg) {
         try {
             output.writeUTF(msg);
             output.flush();

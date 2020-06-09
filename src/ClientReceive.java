@@ -3,12 +3,30 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ClientReceive implements Runnable{
+    private static ClientReceive self=null;
     private DataInputStream input;
     private Socket client;
     private boolean isRunning;
+    private boolean isLogin;
+    private boolean isRoom;
+
+    public boolean isRoom() {
+        return isRoom;
+    }
+    public void setRoom(boolean room) {
+        isRoom = room;
+    }
+    public boolean isLogin() {
+        return isLogin;
+    }
+    public void setLogin(boolean login) {
+        isLogin = login;
+    }
 
     public ClientReceive(Socket client) {
         this.isRunning = true;
+        isLogin=false;
+        isRoom=false;
         this.client = client;
         try {
             input = new DataInputStream(client.getInputStream());
@@ -16,10 +34,13 @@ public class ClientReceive implements Runnable{
             System.out.println("Client error");
             this.release();
         }
+        self=this;
     }
-
+    public static ClientReceive getClientReceive(){
+        return self;
+    }
     //接收消息
-    public String receive() {
+    public synchronized String receive() {
         String msg = "";
         try {
             msg = input.readUTF();
@@ -31,7 +52,23 @@ public class ClientReceive implements Runnable{
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
+        while(!isLogin){
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("receive login");
+        while(!isRoom){
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("receive room");
         while(isRunning) {
             String msg = this.receive();
             if(!msg.equals("")) {

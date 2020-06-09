@@ -108,7 +108,7 @@ public class RoomThread implements Runnable{
         }
     }
     //关闭
-    public void release() {
+    public synchronized void release() {
         this.isRunning = false;
         //sendMessage(this.name+"溜了！",true);
         try {

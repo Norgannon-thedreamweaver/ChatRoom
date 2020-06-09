@@ -46,9 +46,10 @@ public class Room implements Runnable{
         try {
             for(int i=10;i>0;i--){
                 for(RoomThread member:this.MemberList){
-                    member.sendMessage("群聊即将爆破："+i,true);
-                    Thread.sleep(1000);
+                    member.send("群聊即将爆破："+i);
+
                 }
+                Thread.sleep(1000);
             }
             for(RoomThread member:this.MemberList){
                 member.release();
