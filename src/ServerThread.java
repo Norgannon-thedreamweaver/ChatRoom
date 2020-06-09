@@ -3,6 +3,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.regex.Pattern;
 
 public class ServerThread implements Runnable{
     private DataInputStream input;
@@ -101,14 +103,62 @@ public class ServerThread implements Runnable{
         Server.getServerThread().remove(this);
         sendOthers(this.name+"下线了！",true);
     }
-
+    public void createRoom(boolean secret,String password){
+        Room room=new Room(secret,password);
+        Server.getAllRoom().add(room);
+        room.addMember(this.client,this.input,this.output,this.name);
+        new Thread(room).start();
+        Server.getServerThread().remove(this);
+        this.isRunning=false;
+    }
+    public void joinRoom(int RID){
+        Room room=Server.getRoomByRID(RID);
+        if(room!=null&&!room.secret){
+            room.addMember(this.client,this.input,this.output,this.name);
+            Server.getServerThread().remove(this);
+            this.isRunning=false;
+        }
+        else{
+            this.send("未找到对应的房间");
+        }
+    }
+    public void joinRoom(int RID,String password){
+        Room room=Server.getRoomByRID(RID);
+        if(room!=null&&room.secret){
+            if(room.getPassword().equals(password)){
+                room.addMember(this.client,this.input,this.output,this.name);
+                Server.getServerThread().remove(this);
+                this.isRunning=false;
+            }
+            else
+                this.send("密码错误");
+        }
+        else{
+            this.send("未找到对应的房间");
+        }
+    }
+    public void Command(String msg){
+        String[] str=msg.split(" ");
+        if(str.length==3&&str[0].equals("join")&&str[1].equals("-public")&&Pattern.matches("^[0-9]+$",str[2])){
+            joinRoom(Integer.parseInt(str[2]));
+        }
+        if(str.length==4&&str[0].equals("join")&&str[1].equals("-private")&&Pattern.matches("^[0-9]+$",str[3])){
+            joinRoom(Integer.parseInt(str[3]),str[2]);
+        }
+        if(str.length==2&&str[0].equals("create")&&str[1].equals("-public")){
+            createRoom(false,null);
+        }
+        if(str.length==3&&str[0].equals("create")&&str[1].equals("-private")){
+            createRoom(true,str[2]);
+        }
+    }
     @Override
     public void run() {
         while(isRunning) {
+            this.send("请输入指令");
             String msg = receive();
             if(!msg.equals("")) {
-                System.out.println("server receive:"+msg);
-                sendOthers(msg,false);
+                Command(msg);
             }
         }
     }

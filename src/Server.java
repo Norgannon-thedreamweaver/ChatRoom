@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class Server {
     private int port;
     private static ArrayList<ServerThread> allThread = new ArrayList<ServerThread>();
+    private static ArrayList<Room> allRoom = new ArrayList<Room>();
     private static Server self=new Server(2333);
     private ServerSocket socket;
 
@@ -19,6 +20,24 @@ public class Server {
     }
     public static ArrayList<ServerThread> getServerThread(){
         return allThread;
+    }
+    public static ArrayList<Room> getAllRoom(){
+        return allRoom;
+    }
+
+    public static boolean checkRoomExist(int RID){
+        for(Room room:allRoom){
+            if(room.RID==RID)
+                return true;
+        }
+        return false;
+    }
+    public static Room getRoomByRID(int RID){
+        for(Room room:allRoom){
+            if(room.RID==RID)
+                return room;
+        }
+        return null;
     }
 
     public void run() throws IOException {
