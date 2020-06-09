@@ -91,6 +91,7 @@ public class ServerThread implements Runnable{
     }
     //关闭
     public void release() {
+        sendOthers(this.name+"下线了！",true);
         this.isRunning = false;
         try {
             this.input.close();
@@ -101,7 +102,7 @@ public class ServerThread implements Runnable{
         }
         //溜
         Server.getServerThread().remove(this);
-        sendOthers(this.name+"下线了！",true);
+
     }
     public void createRoom(boolean secret,String password){
         Room room=new Room(secret,password);
