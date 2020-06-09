@@ -39,8 +39,8 @@ public class Client {
         }
         //ClientUI.getClientUI().getFrame().removeAll();
         //ClientUI.getClientUI().getFrame().add(ClientUI.getClientUI().getRoomPanel());
-        while(!ClientUI.getClientUI().isRoomConnect()){
-
+        while(!ClientUI.getClientUI().isLogin()){
+            
         }
 
     }

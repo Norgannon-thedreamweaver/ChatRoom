@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class ClientUI {
     private static ClientUI self=new ClientUI();
     private boolean isConnect=false;
+    private boolean isLogin=false;
     private boolean isRoomConnect=false;
     private JFrame frame;
     private JPanel loginPanel;
@@ -54,6 +55,13 @@ public class ClientUI {
     }
     public void setConnect(boolean connect) {
         isConnect = connect;
+    }
+
+    public boolean isLogin() {
+        return isLogin;
+    }
+    public void setLogin(boolean login) {
+        isLogin = login;
     }
 
     public boolean isRoomConnect() {
