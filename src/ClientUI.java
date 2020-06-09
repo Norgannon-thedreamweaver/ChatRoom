@@ -11,7 +11,58 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.regex.Pattern;
 
-public class ClientUI extends JFrame {
+public class ClientUI {
+    private static ClientUI self=new ClientUI();
+    private boolean isConnect=false;
+    private boolean isRoomConnect=false;
+    private JFrame frame;
+    private JPanel loginPanel;
+    private JPanel CEPanel;
+    private JPanel roomPanel;
+
+    private ClientUI(){
+        frame = new JFrame("Login");
+        frame.setSize(250, 300);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        loginPanel=new LoginUI().getJp();
+        CEPanel=new ConnectError().getCE();
+        roomPanel=new RoomUI().getPanel();
+        frame.add(CEPanel);
+        frame.add(loginPanel);
+        CEPanel.setVisible(false);
+        loginPanel.setVisible(false);
+    }
+    public static ClientUI getClientUI(){
+        return self;
+    }
+    public JFrame getFrame() {
+        return frame;
+    }
+    public JPanel getLoginPanel() {
+        return loginPanel;
+    }
+    public JPanel getCEPanel() {
+        return CEPanel;
+    }
+    public JPanel getRoomPanel() {
+        return roomPanel;
+    }
+
+    public boolean isConnect() {
+        return isConnect;
+    }
+    public void setConnect(boolean connect) {
+        isConnect = connect;
+    }
+
+    public boolean isRoomConnect() {
+        return isRoomConnect;
+    }
+    public void setRoomConnect(boolean roomConnect) {
+        isRoomConnect = roomConnect;
+    }
+
 
     public static void main(String[] args){
         JFrame frame = new JFrame("Login");

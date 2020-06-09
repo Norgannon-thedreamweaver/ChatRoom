@@ -8,16 +8,11 @@ import java.net.UnknownHostException;
 
 public class Client {
     public static void main(String[] args) throws UnknownHostException, IOException {
-        boolean isConnect=false;
         System.out.println("------client------");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        JFrame frame = new JFrame("Login");
-        frame.setSize(250, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel loginPanel=new LoginUI().getJp(),CEPanel=new ConnectError().getCE();
-        while(!isConnect){
+        while(!ClientUI.getClientUI().isConnect()){
             try{
                 //Socket client = new Socket("175.24.53.216",2333);
                 Socket client = new Socket("localhost",2333);
@@ -29,18 +24,23 @@ public class Client {
                 new Thread(receive).start();
                 new Thread(send).start();
 
-                frame.remove(CEPanel);
-                frame.add(loginPanel);
-                isConnect=true;
+                ClientUI.getClientUI().getCEPanel().setVisible(false);
+                ClientUI.getClientUI().getLoginPanel().setVisible(true);
+                ClientUI.getClientUI().setConnect(true);
                 System.out.println("服务器连接成功");
             }
             catch (ConnectException e){
+                ClientUI.getClientUI().getCEPanel().setVisible(true);
                 System.out.println("服务器连接失败");
-                frame.add(CEPanel);
             }
             finally {
-                frame.setVisible(true);
+                ClientUI.getClientUI().getFrame().setVisible(true);
             }
+        }
+        //ClientUI.getClientUI().getFrame().removeAll();
+        //ClientUI.getClientUI().getFrame().add(ClientUI.getClientUI().getRoomPanel());
+        while(!ClientUI.getClientUI().isRoomConnect()){
+
         }
 
     }
