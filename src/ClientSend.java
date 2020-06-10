@@ -54,7 +54,6 @@ public class ClientSend implements Runnable{
                 e.printStackTrace();
             }
         }
-        System.out.println("send login");
         while(!isRoom){
             try {
                 wait();
@@ -62,7 +61,6 @@ public class ClientSend implements Runnable{
                 e.printStackTrace();
             }
         }
-        System.out.println("send room");
         while(isRunning) {
             String msg = this.getStringFromConsole();
             if(!msg.equals("")) {

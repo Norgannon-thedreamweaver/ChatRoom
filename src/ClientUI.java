@@ -101,28 +101,20 @@ public class ClientUI {
     }
 }
 class LoginUI{
-    private JPanel jp;
-    private JLabel userLable;
-    private JLabel passwordLable;
-    private JTextField username;      // 用户名输入框
-    private JPasswordField password;
-    private JButton login;
+    private JPanel jp=new JPanel();
+    private JLabel userLable= new JLabel("用户名:");
+    private JLabel passwordLable= new JLabel("密码:");
+    private JTextField username=new JTextField(10);      // 用户名输入框
+    private JPasswordField password=new JPasswordField(15);
+    private JButton login=new JButton("login");
     private JButton signup;
 
     public LoginUI(){
-        jp = new JPanel();
-        userLable = new JLabel("用户名:");
-        passwordLable = new JLabel("密码:");
-        username=new JTextField(10);
-        password=new JPasswordField(15);
-        login=new JButton("login");
-        signup=new JButton("注册");
         jp.add(userLable);
         jp.add(passwordLable);
         jp.add(username);
         jp.add(password);
         jp.add(login);
-        //jp.add(signup);
 
         jp.setLayout(null);
         jp.setPreferredSize(new Dimension(250, 300));
@@ -131,7 +123,6 @@ class LoginUI{
         username.setBounds(75,70,100,25);
         password.setBounds(75,120,100,25);
         login.setBounds(75,170,100,25);
-        //signup.setBounds(150,170,50,25);
 
         MatteBorder border = new MatteBorder(2, 2, 2, 2, new Color(192, 192,
                 192));
@@ -325,13 +316,10 @@ class LoginUI{
     }
 }
 class ConnectError{
-    private JPanel CE;
-    private JLabel info;
+    private JPanel CE= new JPanel();
+    private JLabel info= new JLabel("网络错误");
 
     public ConnectError(){
-        CE = new JPanel();
-        info = new JLabel("网络错误");
-
         CE.setLayout(null);
         CE.setPreferredSize(new Dimension(250, 300));
         info.setBounds(85,100,80,25);
@@ -343,33 +331,20 @@ class ConnectError{
     }
 }
 class RoomUI{
-    private JPanel panel;
-    private JRadioButton RB01,RB02;
-    private JRadioButton RB11,RB12;
-    private ButtonGroup BG0;
-    private ButtonGroup BG1;
-    private JLabel RIDLable;
-    private JLabel passwordLable;
-    private JTextField RID;      // 用户名输入框
-    private JPasswordField password;
-    private JButton submit;
+    private JPanel panel=new JPanel();
+    private JRadioButton RB01=new JRadioButton("创建房间",true),RB02=new JRadioButton("加入房间");
+    private JRadioButton RB11=new JRadioButton("　公开　",true),RB12=new JRadioButton("　私密　");
+    private ButtonGroup BG0=new ButtonGroup();
+    private ButtonGroup BG1=new ButtonGroup();
+    private JLabel RIDLable= new JLabel("房间号:");
+    private JLabel passwordLable= new JLabel("密码:");
+    private JTextField RID=new JTextField(10);      // 用户名输入框
+    private JPasswordField password=new JPasswordField(15);
+    private JButton submit=new JButton("创建");
     public JPanel getPanel(){
         return panel;
     }
     public RoomUI(){
-        panel=new JPanel();
-        RB01=new JRadioButton("创建房间",true);
-        RB02=new JRadioButton("假如房间");
-        BG0=new ButtonGroup();
-        RB11=new JRadioButton("　公开　",true);
-        RB12=new JRadioButton("　私密　");
-        BG1=new ButtonGroup();
-
-        RIDLable = new JLabel("房间号:");
-        passwordLable = new JLabel("密码:");
-        RID=new JTextField(10);
-        password=new JPasswordField(15);
-        submit=new JButton("创建");
         BG0.add(RB01);BG0.add(RB02);
         BG1.add(RB11);BG1.add(RB12);
         panel.add(RB01);panel.add(RB02);

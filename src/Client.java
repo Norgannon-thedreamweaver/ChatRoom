@@ -35,7 +35,6 @@ public class Client {
                 ClientUI.getClientUI().getFrame().setVisible(true);
             }
         }
-
     }
     public static boolean login(String username,String password,ClientSend send,ClientReceive receive){
         String param="login "+username+" "+password;

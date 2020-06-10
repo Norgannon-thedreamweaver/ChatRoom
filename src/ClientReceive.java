@@ -60,7 +60,6 @@ public class ClientReceive implements Runnable{
                 e.printStackTrace();
             }
         }
-        System.out.println("receive login");
         while(!isRoom){
             try {
                 wait();
@@ -68,7 +67,6 @@ public class ClientReceive implements Runnable{
                 e.printStackTrace();
             }
         }
-        System.out.println("receive room");
         while(isRunning) {
             String msg = this.receive();
             if(!msg.equals("")) {
