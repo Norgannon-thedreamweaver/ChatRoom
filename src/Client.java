@@ -48,6 +48,19 @@ public class Client {
         }
         return false;
     }
+    public static boolean signup(String username,String password,ClientSend send,ClientReceive receive){
+        //System.out.println("here");
+    	String param="signup "+username+" "+password;
+        send.send(param);
+        String str=receive.receive();
+        System.out.println(str);
+        if(str.equals("signup-success")){
+            send.setSignup(true);
+            receive.setSignup(true);
+            return true;
+        }
+        return false;
+    }
     public static int createRoom(boolean secret,String password,ClientSend send,ClientReceive receive){
         String param="create ";
         if(secret)
@@ -68,7 +81,7 @@ public class Client {
         return 0;
     }
     public static int joinRoom(String RID,ClientSend send,ClientReceive receive){
-        String param="join -private "+RID;
+        String param="join -public "+RID;
         send.send(param);
         String str=receive.receive();
         System.out.println(str);

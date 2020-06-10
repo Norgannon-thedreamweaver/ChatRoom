@@ -59,6 +59,12 @@ public class UserList {
             return -2;
         return 1;
     }
+    public int UserSignup(String name,String passwd){
+        if(UserList.getUserList().addUser(name, passwd)!=1)
+            return -1;
+        return 1;
+    }
+    
     public int AdminLogin(String name,String passwd){
         User admin=getAdminByName(name);
         if(admin==null)

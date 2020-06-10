@@ -138,11 +138,25 @@ public class ServerThread implements Runnable{
             this.send("login-fail");
         }
     }
+    public void Signup(String username,String password){
+        if(UserList.getUserList().UserSignup(username,password)==1){
+        	//System.out.println("here");
+            this.send("signup-success");
+        }
+        else{
+            this.send("signup-fail");
+        }
+    }
     public void Command(String msg){
         String[] str=msg.split(" ");
+        //System.out.println("here");
         if(user==null){
             if(str.length==3&&str[0].equals("login")){
                 Login(str[1],str[2]);
+            }
+            else if(str.length==3&&str[0].equals("signup")){
+            	//System.out.println("here");
+                Signup(str[1],str[2]);
             }
         }
         else{

@@ -8,6 +8,7 @@ public class ClientReceive implements Runnable{
     private Socket client;
     private boolean isRunning;
     private boolean isLogin;
+    private boolean isSignup;
     private boolean isRoom;
 
     public boolean isRoom() {
@@ -22,7 +23,12 @@ public class ClientReceive implements Runnable{
     public void setLogin(boolean login) {
         isLogin = login;
     }
-
+    public boolean isSignup() {
+        return isSignup;
+    }
+    public void setSignup(boolean signup) {
+    	isSignup = signup;
+    }
     public ClientReceive(Socket client) {
         this.isRunning = true;
         isLogin=false;

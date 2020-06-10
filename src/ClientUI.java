@@ -1,14 +1,12 @@
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ClientUI {
@@ -21,6 +19,10 @@ public class ClientUI {
     private JPanel loginPanel;
     private JPanel CEPanel;
     private JPanel roomPanel;
+    private JPanel signupsuccessPanel;
+    private JPanel signupfailPanel;
+    private JPanel loginfailPanel;
+    private JPanel chatPanel;
 
     private ClientUI() {
         frame = new JFrame("Login");
@@ -30,6 +32,10 @@ public class ClientUI {
         loginPanel = new LoginUI().getJp();
         CEPanel = new ConnectError().getCE();
         roomPanel = new RoomUI().getPanel();
+        signupsuccessPanel=new SignupSuccessUI().getJp();
+        signupfailPanel=new SignupFailUI().getJp();
+        loginfailPanel=new LoginFailUI().getJp();
+        chatPanel=new ChatUI().getJp();
     }
     public static ClientUI getClientUI(){
         return self;
@@ -76,28 +82,169 @@ public class ClientUI {
         frame.remove(CEPanel);
         frame.add(loginPanel);
         loginPanel.revalidate();
+        roomPanel.updateUI();
         setConnect(true);
     }
     public void Login2Room(){
         frame.remove(loginPanel);
         frame.add(roomPanel);
         roomPanel.revalidate();
+        roomPanel.updateUI();
         setLogin(true);
+    }
+    public void Login2LoginFail(){
+        frame.remove(loginPanel);
+        frame.add(loginfailPanel);
+        loginfailPanel.revalidate();
+        loginfailPanel.updateUI();
+        setLogin(true);
+    }
+    public void Login2SignupSuccess(){
+        frame.remove(loginPanel);
+        frame.add(signupsuccessPanel);
+        signupsuccessPanel.revalidate();
+        signupsuccessPanel.updateUI();
+        setLogin(true);
+    }
+    public void Login2SignupFail(){
+        frame.remove(loginPanel);
+        frame.add(signupfailPanel);
+        signupfailPanel.revalidate();
+        signupfailPanel.updateUI();
+        setLogin(true);
+    }
+    public void SignupSuccess2Login(){
+    	frame.remove(signupsuccessPanel);
+        frame.add(loginPanel);
+        loginPanel.revalidate();
+        loginPanel.updateUI();
+        setLogin(false);
+    }
+    public void SignupFail2Login(){
+    	frame.remove(signupfailPanel);
+        frame.add(loginPanel);
+        loginPanel.revalidate();
+        loginPanel.updateUI();
+        setLogin(false);
+    }
+    public void LoginFail2Login(){
+    	frame.remove(loginfailPanel);
+        frame.add(loginPanel);
+        loginPanel.revalidate();
+        loginPanel.updateUI();
+        setLogin(false);
     }
     public void Room2Chat(int rid){
         frame.remove(roomPanel);
         frame.setSize(800,600);
-
+        frame.add(chatPanel);
+        chatPanel.revalidate();
+        chatPanel.updateUI();
         RID=rid;
         setRoomConnect(true);
     }
     public static void main(String[] args){
         JFrame frame = new JFrame("Login");
-        frame.setSize(250, 300);
+        frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        frame.add(new RoomUI().getPanel());
+        String[][] t = {{"A1"}, {"A2"}, {"A3"}};
+        JPanel jp=new JPanel();
+        JPanel chat=new ChatUI().getJp();
+        JPanel ul=new UserListUI(1923,false,t).getPanel();
+        jp.setLayout(null);
+        jp.setPreferredSize(new Dimension(810, 600));
+        chat.setBounds(0,0,540,600);
+        ul.setBounds(550,0,225,600);
+        jp.add(chat);
+        jp.add(ul);
+
+        frame.add(jp);
         frame.setVisible(true);
+    }
+}
+class SignupSuccessUI{
+    private JPanel jp=new JPanel();
+    private JLabel Lable= new JLabel("注册成功");
+    private JButton back=new JButton("返回登录页面");
+
+    public SignupSuccessUI(){
+        jp.add(Lable);
+        jp.add(back);
+        
+        jp.setLayout(null);
+        jp.setPreferredSize(new Dimension(250, 300));
+        Lable.setBounds(95,80,150,25);
+        back.setBounds(63,140,120,25);
+        
+        back.addActionListener(new BackListener());
+    }
+    public JPanel getJp(){
+        return  jp;
+    }
+    class BackListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        	System.out.println("Back button pressed");
+            ClientUI.getClientUI().SignupSuccess2Login();
+            System.out.println("Back seccess");
+        }
+    }
+}
+class SignupFailUI{
+    private JPanel jp=new JPanel();
+    private JLabel Lable= new JLabel("注册失败");
+    private JButton back=new JButton("返回登录页面");
+
+    public SignupFailUI(){
+        jp.add(Lable);
+        jp.add(back);
+        
+        jp.setLayout(null);
+        jp.setPreferredSize(new Dimension(250, 300));
+        Lable.setBounds(95,80,150,25);
+        back.setBounds(63,140,120,25);
+        
+        back.addActionListener(new BackListener());
+    }
+    public JPanel getJp(){
+        return  jp;
+    }
+    class BackListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        	System.out.println("Back button pressed");
+            ClientUI.getClientUI().SignupFail2Login();
+            System.out.println("Back seccess");
+        }
+    }
+}
+class LoginFailUI{
+    private JPanel jp=new JPanel();
+    private JLabel Lable= new JLabel("登录失败");
+    private JButton back=new JButton("返回登录页面");
+
+    public LoginFailUI(){
+        jp.add(Lable);
+        jp.add(back);
+        
+        jp.setLayout(null);
+        jp.setPreferredSize(new Dimension(250, 300));
+        Lable.setBounds(95,80,150,25);
+        back.setBounds(63,140,120,25);
+        
+        back.addActionListener(new BackListener());
+    }
+    public JPanel getJp(){
+        return  jp;
+    }
+    class BackListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        	System.out.println("Back button pressed");
+            ClientUI.getClientUI().LoginFail2Login();
+            System.out.println("Back seccess");
+        }
     }
 }
 class LoginUI{
@@ -107,7 +254,7 @@ class LoginUI{
     private JTextField username=new JTextField(10);      // 用户名输入框
     private JPasswordField password=new JPasswordField(15);
     private JButton login=new JButton("login");
-    private JButton signup;
+    private JButton signup=new JButton("signup");
 
     public LoginUI(){
         jp.add(userLable);
@@ -115,6 +262,7 @@ class LoginUI{
         jp.add(username);
         jp.add(password);
         jp.add(login);
+        jp.add(signup);
 
         jp.setLayout(null);
         jp.setPreferredSize(new Dimension(250, 300));
@@ -122,19 +270,22 @@ class LoginUI{
         passwordLable.setBounds(25,120,80,25);
         username.setBounds(75,70,100,25);
         password.setBounds(75,120,100,25);
-        login.setBounds(75,170,100,25);
+        login.setBounds(35,170,80,25);
+        signup.setBounds(135,170,80,25);
 
         MatteBorder border = new MatteBorder(2, 2, 2, 2, new Color(192, 192,
                 192));
         username.setBorder(border);
         password.setBorder(border);
         login.setEnabled(false);
+        signup.setEnabled(false);
 
         username.getDocument().addDocumentListener(new UserChangeListener());
         password.getDocument().addDocumentListener(new PasswordChangeListener());
         username.addKeyListener(new NameTyped());
         password.addKeyListener(new PassworTyped());
         login.addActionListener(new LoginListener());
+        signup.addActionListener(new SignupListener());
     }
     public JPanel getJp(){
         return  jp;
@@ -156,6 +307,40 @@ class LoginUI{
                     if(Client.login(username.getText(),new String(password.getPassword()),ClientSend.getClientSend(),ClientReceive.getClientReceive())){
                         ClientUI.getClientUI().Login2Room();
                         System.out.println("login seccess");
+                    }
+                    else
+                    {
+                    	ClientUI.getClientUI().Login2LoginFail();
+                        System.out.println("login fail");
+                    }
+
+
+                }
+            }
+        }
+    }
+    class SignupListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String u=username.getText();
+            String p=new String(password.getPassword());
+            ClientSend s=ClientSend.getClientSend();
+            ClientReceive r=ClientReceive.getClientReceive();
+            synchronized (s){
+                synchronized (r){
+                    s.notify();
+                    r.notify();
+                    System.out.println(u);
+                    System.out.println(p);
+                    System.out.println("Signup button pressed");
+                    if(Client.signup(username.getText(),new String(password.getPassword()),ClientSend.getClientSend(),ClientReceive.getClientReceive())){
+                        ClientUI.getClientUI().Login2SignupSuccess();
+                        System.out.println("signup seccess");
+                    }
+                    else
+                    {
+                    	ClientUI.getClientUI().Login2SignupFail();
+                        System.out.println("signup fail");
                     }
 
 
@@ -182,9 +367,15 @@ class LoginUI{
                 username.setBorder(border);
             }
             if(ub&&pb)
-                login.setEnabled(true);
+            {
+            	login.setEnabled(true);
+            	signup.setEnabled(true);
+            }
             else
-                login.setEnabled(false);
+            {
+            	login.setEnabled(false);
+            	signup.setEnabled(false);
+            }
         }
 
         @Override
@@ -204,9 +395,15 @@ class LoginUI{
                 username.setBorder(border);
             }
             if(ub&&pb)
-                login.setEnabled(true);
+            {
+            	login.setEnabled(true);
+            	signup.setEnabled(true);
+            }
             else
-                login.setEnabled(false);
+            {
+            	login.setEnabled(false);
+            	signup.setEnabled(false);
+            }
         }
 
         @Override
@@ -233,9 +430,15 @@ class LoginUI{
                 password.setBorder(border);
             }
             if(ub&&pb)
-                login.setEnabled(true);
+            {
+            	login.setEnabled(true);
+            	signup.setEnabled(true);
+            }
             else
-                login.setEnabled(false);
+            {
+            	login.setEnabled(false);
+            	signup.setEnabled(false);
+            }
         }
 
         @Override
@@ -255,9 +458,15 @@ class LoginUI{
                 password.setBorder(border);
             }
             if(ub&&pb)
-                login.setEnabled(true);
+            {
+            	login.setEnabled(true);
+            	signup.setEnabled(true);
+            }
             else
-                login.setEnabled(false);
+            {
+            	login.setEnabled(false);
+            	signup.setEnabled(false);
+            }
         }
 
         @Override
@@ -354,12 +563,12 @@ class RoomUI{
         RID.setVisible(false);RIDLable.setVisible(false);
         password.setVisible(false);passwordLable.setVisible(false);
         panel.add(submit);
-
+        
         panel.setLayout(null);
-        RB01.setBounds(30,10,75,25);
-        RB02.setBounds(125,10,75,25);
-        RB11.setBounds(30,35,75,25);
-        RB12.setBounds(125,35,75,25);
+        RB01.setBounds(30,10,100,25);
+        RB02.setBounds(150,10,100,25);
+        RB11.setBounds(30,35,100,25);
+        RB12.setBounds(150,35,100,25);
 
         panel.setPreferredSize(new Dimension(250, 300));
         RIDLable.setBounds(20,85,80,25);
@@ -737,4 +946,213 @@ class RoomUI{
         return true;
     }
 }
-class ChatUI{}
+class ChatUI{
+    JPanel jp=new JPanel();
+	// 创建文本区域组件
+    JTextArea outputarea = new JTextArea();
+    JTextArea inputarea = new JTextArea();
+    //最底层面板，包含其他面板
+
+    // 创建滚动面板，包括文本区域组件
+    JScrollPane output = new JScrollPane(
+    		outputarea,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+    );
+    JScrollPane input = new JScrollPane(
+    		inputarea,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+    );
+    JButton send=new JButton("send");
+    JLayeredPane layer = new JLayeredPane();
+    //返回最外层panel
+    public JPanel getJp(){
+        return  jp;
+    }
+    public ChatUI(){
+    	outputarea.setLineWrap(false);
+    	outputarea.setEditable(false);
+    	inputarea.setLineWrap(true);
+    	inputarea.setEditable(true);
+    	jp.add(output);
+    	send.setEnabled(false);
+
+        layer.setBounds(10,410,530,140);
+        layer.add(inputarea,1);
+        layer.add(send,0);
+        jp.add(layer);
+
+    	jp.setLayout(null);
+        jp.setPreferredSize(new Dimension(550, 600));
+    	output.setBounds(10,10,530,390);
+    	inputarea.setBounds(0,0,520,130);
+    	inputarea.setBorder(new MatteBorder(1, 1, 1, 1, new Color(122,138,153)));
+    	send.setBounds(440,100,75,25);
+
+        inputarea.getDocument().addDocumentListener(new InputChangeListener());
+        inputarea.addKeyListener(new InputTyped());
+        send.addActionListener(new SendListener());
+    }
+    class InputChangeListener implements DocumentListener{
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            String input=inputarea.getText();
+            if(input.length()==0)send.setEnabled(false);
+            else send.setEnabled(true);
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            String input=inputarea.getText();
+            if(input.length()==0)send.setEnabled(false);
+            else send.setEnabled(true);
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+
+        }
+    }
+    class InputTyped implements KeyListener{
+        @Override
+        public void keyTyped(KeyEvent e) {
+            String input=inputarea.getText();
+            if(input.length() >= 200) e.consume();
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
+        }
+    }
+    class SendListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String input=inputarea.getText();
+            ClientSend s=ClientSend.getClientSend();
+            synchronized (s){
+                s.send(input);
+            }
+        }
+    }
+    //接受字符串
+    public boolean addstring(String str)
+    {
+    	this.outputarea.append(str);
+    	return true;
+    }
+}
+class UserListUI {
+    private JPanel panel=new JPanel();
+    private JLabel RID;
+    private DefaultTableModel model;
+    private JTable list;
+    private JScrollPane scroll;
+    private JButton close=new JButton("close");
+    private JButton leave=new JButton("leave");
+    private JPopupMenu pop = getTablePop();
+
+    public JPanel getPanel(){
+        return panel;
+    }
+
+    public UserListUI(int rid,boolean isAdmin,String[][] users) {
+        panel.setLayout(null);
+        panel.setPreferredSize(new Dimension(240, 600));
+
+
+        RID=new JLabel("当前房间号:"+String.valueOf(rid));
+        model=new DefaultTableModel(users, new String[]{"在线用户"}){public boolean isCellEditable(int row, int column) {return false;}};
+        list=new JTable(model);
+        scroll = new JScrollPane(list);
+        list.setPreferredScrollableViewportSize(new Dimension(225, 450));
+        list.setRowHeight(30);
+        list.getTableHeader().setReorderingAllowed( false );
+        scroll.setAutoscrolls(true);
+        scroll.setBounds(0,50,225,450);
+
+        RID.setBounds(70,0,100,50);
+        leave.setBounds(20,510,75,25);
+        close.setBounds(125,510,75,25);
+
+        panel.add(scroll);
+        panel.add(RID);
+        panel.add(close);
+        panel.add(leave);
+
+        list.addMouseListener(new TableMouse());
+        //list.setComponentPopupMenu(pop);
+    }
+
+    private JPopupMenu getTablePop() {
+        JPopupMenu pop = new JPopupMenu();// 弹出菜单对象
+        JMenuItem mi_admin = new JMenuItem("设为管理员");
+        JMenuItem mi_send=new JMenuItem("私信");
+        JMenuItem mi_del= new JMenuItem("移除");
+
+        mi_admin.setActionCommand("admin");
+        mi_send.setActionCommand("send");
+        mi_del.setActionCommand("del");
+        // 弹出菜单上的事件监听器对象
+        ActionListener al = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String s = e.getActionCommand();
+                // 哪个菜单项点击了，这个s就是其设定的ActionCommand
+                popMenuAction(s);
+            }
+        };
+        mi_admin.addActionListener(al);
+        mi_send.addActionListener(al);
+        mi_del.addActionListener(al);
+        pop.add(mi_send);
+        pop.add(mi_del);
+        return pop;
+    }
+    private void popMenuAction(String command) {
+        // 得到在表格上选中的行
+        final int selectIndex = list.getSelectedRow();
+        if (selectIndex == -1) {
+            return;
+        }
+        if (command.equals("del")) {
+            System.out.println("del");
+        } else if (command.equals("send")) {
+            System.out.println("send");
+        } else {
+            System.out.println("??");
+        }
+        // 刷新表格
+        SwingUtilities.updateComponentTreeUI(list);
+    }
+    class TableMouse extends MouseAdapter {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            if (evt.getButton() == java.awt.event.MouseEvent.BUTTON3) {
+                //通过点击位置找到点击为表格中的行
+                int focusedRowIndex = list.rowAtPoint(evt.getPoint());
+                if (focusedRowIndex == -1) {
+                    return;
+                }
+                //将表格所选项设为当前右键点击的行
+                list.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
+                //弹出菜单
+                pop.show(list, evt.getX(), evt.getY());
+            }
+            else if (evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
+                //通过点击位置找到点击为表格中的行
+                int focusedRowIndex = list.rowAtPoint(evt.getPoint());
+                if (focusedRowIndex == -1) {
+                    return;
+                }
+                //将表格所选项设为当前右键点击的行
+                list.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
+            }
+        }
+    }
+}
