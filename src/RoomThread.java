@@ -39,8 +39,6 @@ public class RoomThread implements Runnable{
         this.room=room;
         try {
             System.out.println(this.name+"来了");
-            this.send(this.name+",您来辣!");
-            this.send("当前房间号为"+RID+",其余在线人数"+room.getMemberList().size());
             this.sendMessage(this.name+"来了",true);
         }catch(Exception e) {
             release();

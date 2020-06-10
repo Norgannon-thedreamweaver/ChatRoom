@@ -16,6 +16,7 @@ public class ClientUI {
     private boolean isConnect=false;
     private boolean isLogin=false;
     private boolean isRoomConnect=false;
+    private int RID=0;
     private JFrame frame;
     private JPanel loginPanel;
     private JPanel CEPanel;
@@ -74,13 +75,21 @@ public class ClientUI {
     public void CE2Login(){
         frame.remove(CEPanel);
         frame.add(loginPanel);
+        loginPanel.revalidate();
         setConnect(true);
     }
     public void Login2Room(){
-        frame.add(roomPanel);
         frame.remove(loginPanel);
-
+        frame.add(roomPanel);
+        roomPanel.revalidate();
         setLogin(true);
+    }
+    public void Room2Chat(int rid){
+        frame.remove(roomPanel);
+        frame.setSize(800,600);
+
+        RID=rid;
+        setRoomConnect(true);
     }
     public static void main(String[] args){
         JFrame frame = new JFrame("Login");
@@ -420,8 +429,11 @@ class RoomUI{
                         else {
                             ret=Client.createRoom(true,pass,s,r);
                         }
-                        if(ret>=1000)
+                        if(ret>=1000){
                             System.out.println("create room:"+ret);
+                            ClientUI.getClientUI().Room2Chat(ret);
+                        }
+
                         else
                             System.out.println("crete room fail");
                     }
@@ -432,8 +444,10 @@ class RoomUI{
                         else {
                             ret=Client.joinRoom(rid,pass,s,r);
                         }
-                        if(ret==1)
+                        if(ret==1){
+                            ClientUI.getClientUI().Room2Chat(Integer.parseInt(rid));
                             System.out.println("join room");
+                        }
                         else if(ret==0)
                             System.out.println("room not found");
                         else if(ret==-1)
