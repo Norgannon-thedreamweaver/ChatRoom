@@ -21,18 +21,14 @@ public class ClientUI {
     private JPanel CEPanel;
     private JPanel roomPanel;
 
-    private ClientUI(){
+    private ClientUI() {
         frame = new JFrame("Login");
         frame.setSize(250, 300);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        loginPanel=new LoginUI().getJp();
-        CEPanel=new ConnectError().getCE();
-        roomPanel=new RoomUI().getPanel();
-        frame.add(CEPanel);
-        frame.add(loginPanel);
-        CEPanel.setVisible(false);
-        loginPanel.setVisible(false);
+        loginPanel = new LoginUI().getJp();
+        CEPanel = new ConnectError().getCE();
+        roomPanel = new RoomUI().getPanel();
     }
     public static ClientUI getClientUI(){
         return self;
@@ -72,6 +68,20 @@ public class ClientUI {
     }
 
 
+    public void init2CE(){
+        frame.add(CEPanel);
+    }
+    public void CE2Login(){
+        frame.remove(CEPanel);
+        frame.add(loginPanel);
+        setConnect(true);
+    }
+    public void Login2Room(){
+        frame.add(roomPanel);
+        frame.remove(loginPanel);
+
+        setLogin(true);
+    }
     public static void main(String[] args){
         JFrame frame = new JFrame("Login");
         frame.setSize(250, 300);
@@ -143,8 +153,11 @@ class LoginUI{
                     System.out.println(u);
                     System.out.println(p);
                     System.out.println("Login button pressed");
-                    if(Client.login(username.getText(),new String(password.getPassword()),ClientSend.getClientSend(),ClientReceive.getClientReceive()))
+                    if(Client.login(username.getText(),new String(password.getPassword()),ClientSend.getClientSend(),ClientReceive.getClientReceive())){
+                        ClientUI.getClientUI().Login2Room();
                         System.out.println("login seccess");
+                    }
+
 
                 }
             }

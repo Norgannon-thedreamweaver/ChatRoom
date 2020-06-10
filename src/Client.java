@@ -24,23 +24,16 @@ public class Client {
                 new Thread(receive).start();
                 new Thread(send).start();
 
-                ClientUI.getClientUI().getCEPanel().setVisible(false);
-                ClientUI.getClientUI().getLoginPanel().setVisible(true);
-                ClientUI.getClientUI().setConnect(true);
+                ClientUI.getClientUI().CE2Login();
                 System.out.println("服务器连接成功");
             }
             catch (ConnectException e){
-                ClientUI.getClientUI().getCEPanel().setVisible(true);
+                ClientUI.getClientUI().init2CE();
                 System.out.println("服务器连接失败");
             }
             finally {
                 ClientUI.getClientUI().getFrame().setVisible(true);
             }
-        }
-        //ClientUI.getClientUI().getFrame().removeAll();
-        //ClientUI.getClientUI().getFrame().add(ClientUI.getClientUI().getRoomPanel());
-        while(!ClientUI.getClientUI().isLogin()){
-            
         }
 
     }
