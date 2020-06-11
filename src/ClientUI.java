@@ -1039,6 +1039,7 @@ class ChatUI{
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
     );
+    JLabel info=new JLabel("按下Shift+Enter换行");
     JButton send=new JButton("send");
     JLayeredPane layer = new JLayeredPane();
     //返回最外层panel
@@ -1056,6 +1057,7 @@ class ChatUI{
         layer.setBounds(10,410,530,140);
         layer.add(inputarea,1);
         layer.add(send,0);
+        layer.add(info,0);
         jp.add(layer);
 
     	jp.setLayout(null);
@@ -1063,6 +1065,8 @@ class ChatUI{
     	output.setBounds(10,10,530,390);
     	inputarea.setBounds(0,0,520,130);
     	inputarea.setBorder(new MatteBorder(1, 1, 1, 1, new Color(122,138,153)));
+    	info.setBounds(330,100,140,25);
+    	info.setForeground(new Color(145,145,145));
     	send.setBounds(440,100,75,25);
 
         inputarea.getDocument().addDocumentListener(new InputChangeListener());
@@ -1076,7 +1080,7 @@ class ChatUI{
             String input=inputarea.getText();
             if(input.length()==0)send.setEnabled(false);
             else send.setEnabled(true);
-            send.repaint();
+            layer.repaint();
         }
 
         @Override
@@ -1084,12 +1088,12 @@ class ChatUI{
             String input=inputarea.getText();
             if(input.length()==0)send.setEnabled(false);
             else send.setEnabled(true);
-            send.repaint();
+            layer.repaint();
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-            send.repaint();
+            layer.repaint();
         }
     }
     class InputTyped implements KeyListener{
@@ -1120,7 +1124,7 @@ class ChatUI{
             if(!e.isShiftDown()&&!e.isAltDown()&&!e.isControlDown()&&e.getKeyCode() == KeyEvent.VK_ENTER){
                 inputarea.setText("");
             }
-            //send.repaint();
+            layer.repaint();
         }
     }
     class SendListener implements ActionListener{
