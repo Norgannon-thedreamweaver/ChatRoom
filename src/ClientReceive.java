@@ -108,6 +108,9 @@ public class ClientReceive implements Runnable{
         else if(msg.startsWith("~close")){
             ClientUI.getClientUI().Chat2Room();
         }
+        else if(msg.equals("~self leave")){
+            ClientSend.getClientSend().send("-forceleave");
+        }
         else{
             ClientUI.getClientUI().getChat().addstring(msg+"\n\n");
         }

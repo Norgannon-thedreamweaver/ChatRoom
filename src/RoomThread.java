@@ -74,13 +74,16 @@ public class RoomThread implements Runnable{
 
     public void sendPrivate(String name,String message){
         RoomThread to=this.room.getMemberByName(name);
-        if(to!=null)
+        if(to!=null){
             to.send(this.name+"悄悄对你说:"+message);
+            this.send("你悄悄对"+name+"说:"+message);
+        }
+
     }
     public void sendPublic(String message,boolean isSys){
         for(RoomThread member:this.room.getMemberList()) {
             if(!isSys) {
-                member.send(this.name+"："+message); //群聊消息
+                member.send(this.name+":"+message); //群聊消息
             }else {
                 member.send(message); //系统消息
             }
@@ -94,13 +97,22 @@ public class RoomThread implements Runnable{
             this.sendMessage(this.room.getMemberString(),true);
         }
         else if(str.length==2&&str[0].startsWith("-del")){
-            this.room.removeMember(str[1]);
-            this.sendMessage(this.room.getMemberString(),true);
+            RoomThread tmp=this.room.getMemberByName(str[1]);
+            if(tmp!=null){
+                tmp.send("~self leave");
+            }
         }
         else if(str.length==1&&str[0].startsWith("-leave")){
             this.room.getMemberList().remove(this);
             this.send("~close");
             this.isRunning=false;
+            this.sendMessage(this.room.getMemberString(),true);
+        }
+        else if(str.length==1&&str[0].startsWith("-forceleave")){
+            this.room.getMemberList().remove(this);
+            this.send("~close");
+            this.isRunning=false;
+            this.sendMessage(name+"被请出了房间",true);
             this.sendMessage(this.room.getMemberString(),true);
         }
         else

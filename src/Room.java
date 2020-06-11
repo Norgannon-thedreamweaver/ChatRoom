@@ -31,7 +31,6 @@ public class Room implements Runnable{
     public void removeMember(String name){
         RoomThread m=getMemberByName(name);
         if(m!=null){
-            m.sendMessage(m.getName()+"离开了房间",true);
             this.MemberList.remove(m);
 
         }

@@ -80,7 +80,6 @@ public class Client {
             receive.setRoom(true);
             return Integer.parseInt(str.substring(idx+1));
         }
-        System.out.println("cr:"+str);
         return 0;
     }
     public static int joinRoom(String RID,ClientSend send,ClientReceive receive){

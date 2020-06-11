@@ -1076,6 +1076,7 @@ class ChatUI{
             String input=inputarea.getText();
             if(input.length()==0)send.setEnabled(false);
             else send.setEnabled(true);
+            send.repaint();
         }
 
         @Override
@@ -1083,10 +1084,12 @@ class ChatUI{
             String input=inputarea.getText();
             if(input.length()==0)send.setEnabled(false);
             else send.setEnabled(true);
+            send.repaint();
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
+            send.repaint();
         }
     }
     class InputTyped implements KeyListener{
@@ -1109,7 +1112,7 @@ class ChatUI{
                 else
                     e.consume();
             }
-            layer.repaint();
+            //layer.repaint();
         }
 
         @Override
@@ -1177,7 +1180,7 @@ class UserListUI {
         scroll.setAutoscrolls(true);
         scroll.setBounds(0,50,225,450);
 
-        RID.setBounds(70,0,100,50);
+        RID.setBounds(70,0,120,50);
         leave.setBounds(20,510,75,25);
         close.setBounds(125,510,75,25);
         close.setEnabled(isAdmin);
@@ -1204,7 +1207,9 @@ class UserListUI {
         JMenuItem mi_admin = new JMenuItem("设为管理员");
         JMenuItem mi_send=new JMenuItem("私信");
         JMenuItem mi_del= new JMenuItem("移除");
+        boolean isAdmin;
         public JPOP(boolean isAdmin){
+            this.isAdmin=isAdmin;
             mi_admin.setActionCommand("admin");
             mi_send.setActionCommand("send");
             mi_del.setActionCommand("del");
@@ -1227,40 +1232,15 @@ class UserListUI {
                 mi_send.setEnabled(false);
                 mi_del.setEnabled(false);
             }
-            else{
+            else if(isAdmin){
                 mi_send.setEnabled(true);
                 mi_del.setEnabled(true);
             }
-        }
-    }
-    private JPopupMenu getTablePop(boolean isAdmin) {
-        JPopupMenu pop = new JPopupMenu();// 弹出菜单对象
-        JMenuItem mi_admin = new JMenuItem("设为管理员");
-        JMenuItem mi_send=new JMenuItem("私信");
-        JMenuItem mi_del= new JMenuItem("移除");
-
-        mi_admin.setActionCommand("admin");
-        mi_send.setActionCommand("send");
-        mi_del.setActionCommand("del");
-        // 弹出菜单上的事件监听器对象
-        ActionListener al = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String s = e.getActionCommand();
-                // 哪个菜单项点击了，这个s就是其设定的ActionCommand
-                popMenuAction(s);
+            else{
+                mi_send.setEnabled(true);
+                mi_del.setEnabled(false);
             }
-        };
-        mi_admin.addActionListener(al);
-        mi_send.addActionListener(al);
-        mi_del.addActionListener(al);
-        mi_del.setEnabled(isAdmin);
-        if(list.getSelectedRow()!=-1&&list.getValueAt(list.getSelectedRow(),0).equals(ClientUI.getClientUI().getName()))
-            mi_send.setEnabled(false);
-        else
-            mi_send.setEnabled(true);
-        pop.add(mi_send);
-        pop.add(mi_del);
-        return pop;
+        }
     }
     private void popMenuAction(String command) {
         // 得到在表格上选中的行
