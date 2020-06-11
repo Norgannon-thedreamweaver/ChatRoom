@@ -26,6 +26,15 @@ public class ServerThread implements Runnable{
             release();
         }
     }
+    public ServerThread(Socket client,DataInputStream input,DataOutputStream output,User user,String  name) {
+        isRunning = true;
+        this.client=client;
+        this.input=input;
+        this.output=output;
+        this.user=user;
+        this.name=name;
+        System.out.println(this.name+"回来了");
+    }
 
     //接收消息
     public String receive() {
@@ -49,36 +58,8 @@ public class ServerThread implements Runnable{
         }
     }
 
-    public void sendOthers(String msg,boolean isSys) {
-        boolean isPrivate = msg.startsWith("@");
-        ArrayList<ServerThread> all=Server.getServerThread();
-        if(isPrivate) { //私聊
-            int idx = msg.indexOf(":");
-            //获取目标和数据
-            String targetName = msg.substring(1,idx);
-            msg = msg.substring(idx+1);
-            for(ServerThread other:all) {
-                if(other.name.equals(targetName)) { //目标
-                    other.send(this.name+"悄悄的对你说："+msg);
-                    break;
-                }
-            }
-        }else { //群聊
-            for(ServerThread other:all) {
-                if(this==other) { //自己
-                    continue;
-                }
-                if(!isSys) {
-                    other.send(this.name+"对所有人说："+msg); //群聊消息
-                }else {
-                    other.send(msg); //系统消息
-                }
-            }
-        }
-    }
     //关闭
     public void release() {
-        //sendOthers(this.name+"下线了！",true);
         this.isRunning = false;
         try {
             this.input.close();
@@ -94,16 +75,17 @@ public class ServerThread implements Runnable{
     public void createRoom(boolean secret,String password){
         Room room=new Room(secret,password);
         Server.getAllRoom().add(room);
-        room.addMember(this.client,this.input,this.output,this.name);
+        room.addMember(this.client,this.input,this.output,this.user,this.name);
         new Thread(room).start();
         Server.getServerThread().remove(this);
         this.isRunning=false;
         this.send("create-"+room.RID);
+
     }
     public void joinRoom(int RID){
         Room room=Server.getRoomByRID(RID);
         if(room!=null&&!room.secret){
-            room.addMember(this.client,this.input,this.output,this.name);
+            room.addMember(this.client,this.input,this.output,this.user,this.name);
             Server.getServerThread().remove(this);
             this.isRunning=false;
             this.send("join-success");
@@ -116,7 +98,7 @@ public class ServerThread implements Runnable{
         Room room=Server.getRoomByRID(RID);
         if(room!=null&&room.secret){
             if(room.getPassword().equals(password)){
-                room.addMember(this.client,this.input,this.output,this.name);
+                room.addMember(this.client,this.input,this.output,this.user,this.name);
                 Server.getServerThread().remove(this);
                 this.isRunning=false;
                 this.send("join-success");
@@ -149,7 +131,7 @@ public class ServerThread implements Runnable{
     }
     public void Command(String msg){
         String[] str=msg.split(" ");
-        //System.out.println("here");
+        System.out.println("cmd:"+msg);
         if(user==null){
             if(str.length==3&&str[0].equals("login")){
                 Login(str[1],str[2]);
@@ -181,6 +163,7 @@ public class ServerThread implements Runnable{
         while(isRunning) {
             String msg = receive();
             if(!msg.equals("")) {
+                System.out.println("server Thread receive:"+msg);
                 Command(msg);
             }
         }

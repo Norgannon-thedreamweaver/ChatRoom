@@ -13,6 +13,7 @@ public class ClientSend implements Runnable{
     private boolean isLogin;
     private boolean isSignup;
     private boolean isRoom;
+    private boolean isChat;
 
     public boolean isRoom() {
         return isRoom;
@@ -32,10 +33,17 @@ public class ClientSend implements Runnable{
     public void setSignup(boolean signup) {
     	isSignup = signup;
     }
+    public boolean isChat() {
+        return isChat;
+    }
+    public void setChat(boolean chat) {
+        isChat = chat;
+    }
     public ClientSend(Socket client,String name) {
         isRunning = true;
         isLogin=false;
         isRoom=false;
+        isChat=false;
         this.client = client;
         this.console = new BufferedReader(new InputStreamReader(System.in));
         try {
@@ -53,26 +61,31 @@ public class ClientSend implements Runnable{
     }
     @Override
     public synchronized void run() {
-        while(!isLogin){
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        while(isRunning){
+            System.out.println("send start");
+            while(!isLogin){
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            while(!isRoom){
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            while(isChat) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        while(!isRoom){
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        while(isRunning) {
-            String msg = this.getStringFromConsole();
-            if(!msg.equals("")) {
-                this.send(msg);
-            }
-        }
+
     }
 
     /**

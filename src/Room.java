@@ -23,13 +23,29 @@ public class Room implements Runnable{
             this.RID = new Random().nextInt(9000) + 1000;
         } while (Server.checkRoomExist(this.RID));
     }
-    public void addMember(Socket client,DataInputStream input,DataOutputStream output,String name){
-        RoomThread roommember=new RoomThread(client,input,output,name,this.RID,this);
+    public void addMember(Socket client,DataInputStream input,DataOutputStream output,User user,String name){
+        RoomThread roommember=new RoomThread(client,input,output,user,name,this.RID,this);
         this.MemberList.add(roommember);
         new Thread(roommember).start();
     }
+    public void removeMember(String name){
+        RoomThread m=getMemberByName(name);
+        if(m!=null){
+            m.sendMessage(m.getName()+"离开了房间",true);
+            this.MemberList.remove(m);
+
+        }
+    }
     public ArrayList<RoomThread> getMemberList(){
         return this.MemberList;
+    }
+    public String getMemberString(){
+        StringBuilder ret= new StringBuilder("~user list:");
+        for(RoomThread member:this.MemberList){
+            ret.append(member.getName());
+            ret.append(",");
+        }
+        return ret.toString();
     }
     public RoomThread getMemberByName(String name){
         for(RoomThread member:this.MemberList){
@@ -41,29 +57,31 @@ public class Room implements Runnable{
     public void shutdown(){
         this.isRunning=false;
         System.out.println("ready to shutdown");
-    }
-    public void release() {
         try {
-            for(int i=10;i>0;i--){
+            for(int i=5;i>0;i--){
                 for(RoomThread member:this.MemberList){
                     member.send("群聊即将爆破："+i);
 
                 }
                 Thread.sleep(1000);
             }
-            for(RoomThread member:this.MemberList){
-                member.release();
+            ArrayList<RoomThread> tmp=this.MemberList;
+            for(RoomThread member:tmp){
+                member.send("~close");
+                member.setRunning(false);
             }
-            Server.getAllRoom().remove(this);
         }
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+    public void release() {
+        Server.getAllRoom().remove(this);
 
     }
     @Override
     public void run() {
-        while(this.isRunning){
+        while(this.isRunning&&this.MemberList.size()>0){
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

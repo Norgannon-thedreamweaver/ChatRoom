@@ -26,14 +26,19 @@ public class RoomThread implements Runnable{
         this.name = name;
     }
 
+    public void setRunning(boolean isRunning){
+        this.isRunning=isRunning;
+    }
+
     private User user;
     private String name;
 
-    public RoomThread(Socket client,DataInputStream input,DataOutputStream output,String name,int RID,Room room) {
+    public RoomThread(Socket client,DataInputStream input,DataOutputStream output,User user,String name,int RID,Room room) {
         isRunning = true;
         this.client = client;
         this.input=input;
         this.output=output;
+        this.user=user;
         this.name=name;
         this.RID=RID;
         this.room=room;
@@ -82,8 +87,22 @@ public class RoomThread implements Runnable{
         }
     }
     public void Command(String cmd){
-        if(cmd.equals("-shutdown"))
+        String[] str=cmd.split(" ");
+        if(str.length==1&&str[0].equals("-shutdown"))
             this.room.shutdown();
+        else if(str.length==2&&cmd.startsWith("-get user:")){
+            this.sendMessage(this.room.getMemberString(),true);
+        }
+        else if(str.length==2&&str[0].startsWith("-del")){
+            this.room.removeMember(str[1]);
+            this.sendMessage(this.room.getMemberString(),true);
+        }
+        else if(str.length==1&&str[0].startsWith("-leave")){
+            this.room.getMemberList().remove(this);
+            this.send("~close");
+            this.isRunning=false;
+            this.sendMessage(this.room.getMemberString(),true);
+        }
         else
             this.send("wrong cmd");
     }
@@ -105,10 +124,14 @@ public class RoomThread implements Runnable{
             sendPublic(msg,isSys);
         }
     }
+    public void close(){
+        ServerThread new_server=new ServerThread(client,input,output,user,name);
+        Server.getServerThread().add(new_server);
+        new Thread(new_server).start();
+    }
     //关闭
     public synchronized void release() {
         this.isRunning = false;
-        //sendMessage(this.name+"溜了！",true);
         try {
             this.input.close();
             this.output.close();
@@ -117,7 +140,7 @@ public class RoomThread implements Runnable{
             e.printStackTrace();
         }
         //溜
-        Server.getServerThread().remove(this);
+        room.getMemberList().remove(this);
 
     }
 
@@ -130,5 +153,7 @@ public class RoomThread implements Runnable{
                 sendMessage(msg,false);
             }
         }
+        close();
     }
+
 }

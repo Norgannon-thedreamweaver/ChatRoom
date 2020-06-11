@@ -10,6 +10,8 @@ public class ClientReceive implements Runnable{
     private boolean isLogin;
     private boolean isSignup;
     private boolean isRoom;
+    private boolean isChat;
+
 
     public boolean isRoom() {
         return isRoom;
@@ -29,10 +31,17 @@ public class ClientReceive implements Runnable{
     public void setSignup(boolean signup) {
     	isSignup = signup;
     }
+    public boolean isChat() {
+        return isChat;
+    }
+    public void setChat(boolean chat) {
+        isChat = chat;
+    }
     public ClientReceive(Socket client) {
         this.isRunning = true;
         isLogin=false;
         isRoom=false;
+        isChat=false;
         this.client = client;
         try {
             input = new DataInputStream(client.getInputStream());
@@ -59,28 +68,50 @@ public class ClientReceive implements Runnable{
 
     @Override
     public synchronized void run() {
-        while(!isLogin){
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        while(isRunning){
+            System.out.println("receive start");
+            while(!isLogin){
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            while(!isRoom){
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            while(isChat) {
+                String msg = this.receive();
+                if(!msg.equals("")) {
+                    System.out.println(msg);
+                    Command(msg);
+                }
             }
         }
-        while(!isRoom){
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+    }
+    public void Command(String msg){
+        if(msg.startsWith("~user list:")){
+            int idx = msg.indexOf(":");
+            msg=msg.substring(idx+1);
+            String[] user=msg.split(",");
+            String[][] users=new String[user.length][1];
+            for(int i=0;i<user.length;i++){
+                users[i][0]=user[i];
             }
+            ClientUI.getClientUI().getUser().updataList(users);
         }
-        while(isRunning) {
-            String msg = this.receive();
-            if(!msg.equals("")) {
-                System.out.println(msg);
-            }
+        else if(msg.startsWith("~close")){
+            ClientUI.getClientUI().Chat2Room();
+        }
+        else{
+            ClientUI.getClientUI().getChat().addstring(msg+"\n\n");
         }
     }
-
     //关闭
     private void release() {
         this.isRunning = false;

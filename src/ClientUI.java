@@ -2,11 +2,8 @@ import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ClientUI {
@@ -14,7 +11,9 @@ public class ClientUI {
     private boolean isConnect=false;
     private boolean isLogin=false;
     private boolean isRoomConnect=false;
+    private boolean isAdmin=false;
     private int RID=0;
+    private String name=null;
     private JFrame frame;
     private JPanel loginPanel;
     private JPanel CEPanel;
@@ -22,7 +21,10 @@ public class ClientUI {
     private JPanel signupsuccessPanel;
     private JPanel signupfailPanel;
     private JPanel loginfailPanel;
-    private JPanel chatPanel;
+    private JPanel chatroomPanel;
+
+    private ChatUI chat;
+    private UserListUI user;
 
     private ClientUI() {
         frame = new JFrame("Login");
@@ -35,7 +37,6 @@ public class ClientUI {
         signupsuccessPanel=new SignupSuccessUI().getJp();
         signupfailPanel=new SignupFailUI().getJp();
         loginfailPanel=new LoginFailUI().getJp();
-        chatPanel=new ChatUI().getJp();
     }
     public static ClientUI getClientUI(){
         return self;
@@ -51,6 +52,15 @@ public class ClientUI {
     }
     public JPanel getRoomPanel() {
         return roomPanel;
+    }
+    public JPanel getChatRoomPanel() {
+        return chatroomPanel;
+    }
+    public ChatUI getChat() {
+        return chat;
+    }
+    public UserListUI getUser() {
+        return user;
     }
 
     public boolean isConnect() {
@@ -72,6 +82,14 @@ public class ClientUI {
     }
     public void setRoomConnect(boolean roomConnect) {
         isRoomConnect = roomConnect;
+    }
+
+    public String getName(){return this.name;};
+    public void setName(String name){
+        this.name=name;
+    }
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 
 
@@ -136,12 +154,41 @@ public class ClientUI {
     }
     public void Room2Chat(int rid){
         frame.remove(roomPanel);
-        frame.setSize(800,600);
-        frame.add(chatPanel);
-        chatPanel.revalidate();
-        chatPanel.updateUI();
+        frame.setSize(810,600);
+        ChatRoomUI c=new ChatRoomUI(rid,isAdmin,Client.getUserList(name,ClientSend.getClientSend(),ClientReceive.getClientReceive()));
+        chatroomPanel=c.getPanel();
+        chat=c.getChatUI();
+        user=c.getUserListUI();
+        frame.add(chatroomPanel);
+
+        chatroomPanel.revalidate();
+        chatroomPanel.updateUI();
         RID=rid;
         setRoomConnect(true);
+    }
+    public void Chat2Room(){
+        System.out.println("Chat2Room");
+        frame.remove(chatroomPanel);
+        frame.setSize(250,300);
+        roomPanel=new RoomUI().getPanel();
+        frame.add(roomPanel);
+        roomPanel.revalidate();
+        roomPanel.updateUI();
+
+        ClientReceive r=ClientReceive.getClientReceive();
+        ClientSend s= ClientSend.getClientSend();
+        synchronized (s){
+            synchronized (r){
+                s.notify();
+                r.notify();
+                r.setChat(false);
+                s.setChat(false);
+                r.setRoom(false);
+                s.setRoom(false);
+            }
+        }
+        setRoomConnect(false);
+        setLogin(true);
     }
     public static void main(String[] args){
         JFrame frame = new JFrame("Login");
@@ -149,15 +196,7 @@ public class ClientUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         String[][] t = {{"A1"}, {"A2"}, {"A3"}};
-        JPanel jp=new JPanel();
-        JPanel chat=new ChatUI().getJp();
-        JPanel ul=new UserListUI(1923,false,t).getPanel();
-        jp.setLayout(null);
-        jp.setPreferredSize(new Dimension(810, 600));
-        chat.setBounds(0,0,540,600);
-        ul.setBounds(550,0,225,600);
-        jp.add(chat);
-        jp.add(ul);
+        JPanel jp=new ChatRoomUI(1923,false,t).getPanel();
 
         frame.add(jp);
         frame.setVisible(true);
@@ -306,6 +345,7 @@ class LoginUI{
                     System.out.println("Login button pressed");
                     if(Client.login(username.getText(),new String(password.getPassword()),ClientSend.getClientSend(),ClientReceive.getClientReceive())){
                         ClientUI.getClientUI().Login2Room();
+                        ClientUI.getClientUI().setName(u);
                         System.out.println("login seccess");
                     }
                     else
@@ -615,6 +655,7 @@ class RoomUI{
                         }
                         if(ret>=1000){
                             System.out.println("create room:"+ret);
+                            ClientUI.getClientUI().setAdmin(true);
                             ClientUI.getClientUI().Room2Chat(ret);
                         }
 
@@ -946,6 +987,40 @@ class RoomUI{
         return true;
     }
 }
+class ChatRoomUI{
+    ChatUI chat=new ChatUI();
+    UserListUI user;
+
+    JPanel panel=new JPanel();
+    JPanel chatpanel=chat.getJp();
+    JPanel userpanel;
+    public ChatRoomUI(int rid,boolean isAdmin,String[][] users){
+        user=new UserListUI(rid,isAdmin,users);
+        userpanel=user.getPanel();
+        chatpanel.setBounds(0,0,540,600);
+        userpanel.setBounds(550,0,225,600);
+
+        panel.setLayout(null);
+        panel.setPreferredSize(new Dimension(810, 600));
+        panel.add(chatpanel);
+        panel.add(userpanel);
+    }
+    public ChatUI getChatUI(){
+        return chat;
+    }
+    public UserListUI getUserListUI(){
+        return user;
+    }
+    public JPanel getPanel(){
+        return panel;
+    }
+    public JPanel getChat(){
+        return chatpanel;
+    }
+    public JPanel getUser(){
+        return userpanel;
+    }
+}
 class ChatUI{
     JPanel jp=new JPanel();
 	// 创建文本区域组件
@@ -971,7 +1046,7 @@ class ChatUI{
         return  jp;
     }
     public ChatUI(){
-    	outputarea.setLineWrap(false);
+    	outputarea.setLineWrap(true);
     	outputarea.setEditable(false);
     	inputarea.setLineWrap(true);
     	inputarea.setEditable(true);
@@ -1012,7 +1087,6 @@ class ChatUI{
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-
         }
     }
     class InputTyped implements KeyListener{
@@ -1020,26 +1094,46 @@ class ChatUI{
         public void keyTyped(KeyEvent e) {
             String input=inputarea.getText();
             if(input.length() >= 200) e.consume();
+            layer.repaint();
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
-
+            if(e.isShiftDown()&&!e.isAltDown()&&!e.isControlDown()&&e.getKeyCode() == KeyEvent.VK_ENTER){
+                inputarea.append("\n");
+            }
+            else if(!e.isShiftDown()&&!e.isAltDown()&&!e.isControlDown()&&e.getKeyCode() == KeyEvent.VK_ENTER){
+                if(inputarea.getText().length()!=0){
+                    sendButton();
+                }
+                else
+                    e.consume();
+            }
+            layer.repaint();
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-
+            if(!e.isShiftDown()&&!e.isAltDown()&&!e.isControlDown()&&e.getKeyCode() == KeyEvent.VK_ENTER){
+                inputarea.setText("");
+            }
+            //send.repaint();
         }
     }
     class SendListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            String input=inputarea.getText();
-            ClientSend s=ClientSend.getClientSend();
-            synchronized (s){
-                s.send(input);
-            }
+            sendButton();
+        }
+    }
+    public void sendButton(){
+        String input=inputarea.getText();
+        ClientSend s=ClientSend.getClientSend();
+        synchronized (s){
+            s.notify();
+            s.send(input);
+            inputarea.setText("");
+            outputarea.setCaretPosition(outputarea.getDocument().getLength());
         }
     }
     //接受字符串
@@ -1050,17 +1144,22 @@ class ChatUI{
     }
 }
 class UserListUI {
+    private static UserListUI self=null;
     private JPanel panel=new JPanel();
     private JLabel RID;
-    private DefaultTableModel model;
+    private DefaultTableModel model=null;
     private JTable list;
     private JScrollPane scroll;
     private JButton close=new JButton("close");
     private JButton leave=new JButton("leave");
-    private JPopupMenu pop = getTablePop();
+    private JPOP Jpop;
+    private JPopupMenu pop ;
 
     public JPanel getPanel(){
         return panel;
+    }
+    public static UserListUI getSelf(){
+        return self;
     }
 
     public UserListUI(int rid,boolean isAdmin,String[][] users) {
@@ -1081,17 +1180,60 @@ class UserListUI {
         RID.setBounds(70,0,100,50);
         leave.setBounds(20,510,75,25);
         close.setBounds(125,510,75,25);
+        close.setEnabled(isAdmin);
 
         panel.add(scroll);
         panel.add(RID);
         panel.add(close);
         panel.add(leave);
 
+        close.addActionListener(new CloseListener());
+        leave.addActionListener(new LeaveListener());
+        Jpop=new JPOP(isAdmin);
+        pop=Jpop.pop;
         list.addMouseListener(new TableMouse());
         //list.setComponentPopupMenu(pop);
+        self=this;
     }
-
-    private JPopupMenu getTablePop() {
+    public void updataList(String[][] newlist){
+        if(model!=null)
+            model.setDataVector(newlist, new String[]{"在线用户"});
+    }
+    class JPOP{
+        JPopupMenu pop = new JPopupMenu();// 弹出菜单对象
+        JMenuItem mi_admin = new JMenuItem("设为管理员");
+        JMenuItem mi_send=new JMenuItem("私信");
+        JMenuItem mi_del= new JMenuItem("移除");
+        public JPOP(boolean isAdmin){
+            mi_admin.setActionCommand("admin");
+            mi_send.setActionCommand("send");
+            mi_del.setActionCommand("del");
+            ActionListener al = new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String s = e.getActionCommand();
+                    // 哪个菜单项点击了，这个s就是其设定的ActionCommand
+                    popMenuAction(s);
+                }
+            };
+            mi_admin.addActionListener(al);
+            mi_send.addActionListener(al);
+            mi_del.addActionListener(al);
+            mi_del.setEnabled(isAdmin);
+            pop.add(mi_send);
+            pop.add(mi_del);
+        }
+        public void update(){
+            if(list.getSelectedRow()!=-1&&list.getValueAt(list.getSelectedRow(),0).equals(ClientUI.getClientUI().getName())){
+                mi_send.setEnabled(false);
+                mi_del.setEnabled(false);
+            }
+            else{
+                mi_send.setEnabled(true);
+                mi_del.setEnabled(true);
+            }
+        }
+    }
+    private JPopupMenu getTablePop(boolean isAdmin) {
         JPopupMenu pop = new JPopupMenu();// 弹出菜单对象
         JMenuItem mi_admin = new JMenuItem("设为管理员");
         JMenuItem mi_send=new JMenuItem("私信");
@@ -1111,6 +1253,11 @@ class UserListUI {
         mi_admin.addActionListener(al);
         mi_send.addActionListener(al);
         mi_del.addActionListener(al);
+        mi_del.setEnabled(isAdmin);
+        if(list.getSelectedRow()!=-1&&list.getValueAt(list.getSelectedRow(),0).equals(ClientUI.getClientUI().getName()))
+            mi_send.setEnabled(false);
+        else
+            mi_send.setEnabled(true);
         pop.add(mi_send);
         pop.add(mi_del);
         return pop;
@@ -1122,14 +1269,24 @@ class UserListUI {
             return;
         }
         if (command.equals("del")) {
-            System.out.println("del");
-        } else if (command.equals("send")) {
-            System.out.println("send");
-        } else {
+            ClientSend s=ClientSend.getClientSend();
+            synchronized (s){
+                s.notify();
+                Client.deleteUser((String) list.getValueAt(list.getSelectedRow(),0),s);
+            }
+        }
+        else if (command.equals("send")) {
+            JTextArea in=ClientUI.getClientUI().getChat().inputarea;
+            String str=in.getText();
+            if(str.startsWith("@"))
+                str=str.substring(str.indexOf(':')+1);
+            in.setText("@"+(String) list.getValueAt(list.getSelectedRow(),0)+":"+str);
+        }
+        else {
             System.out.println("??");
         }
         // 刷新表格
-        SwingUtilities.updateComponentTreeUI(list);
+        //SwingUtilities.updateComponentTreeUI(list);
     }
     class TableMouse extends MouseAdapter {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -1141,6 +1298,7 @@ class UserListUI {
                 }
                 //将表格所选项设为当前右键点击的行
                 list.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
+                Jpop.update();
                 //弹出菜单
                 pop.show(list, evt.getX(), evt.getY());
             }
@@ -1152,6 +1310,27 @@ class UserListUI {
                 }
                 //将表格所选项设为当前右键点击的行
                 list.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
+                Jpop.update();
+            }
+        }
+    }
+    class CloseListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ClientSend s=ClientSend.getClientSend();
+            synchronized (s){
+                s.notify();
+                s.send("-shutdown");
+            }
+        }
+    }
+    class LeaveListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ClientSend s=ClientSend.getClientSend();
+            synchronized (s){
+                s.notify();
+                s.send("-leave");
             }
         }
     }

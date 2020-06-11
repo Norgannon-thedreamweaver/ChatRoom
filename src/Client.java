@@ -14,8 +14,8 @@ public class Client {
 
         while(!ClientUI.getClientUI().isConnect()){
             try{
-                //Socket client = new Socket("175.24.53.216",2333);
-                Socket client = new Socket("localhost",2333);
+                Socket client = new Socket("175.24.53.216",2333);
+                //Socket client = new Socket("localhost",2333);
 
                 ClientReceive receive=new ClientReceive(client);
                 //客户端发送消息
@@ -74,10 +74,13 @@ public class Client {
         System.out.println(str);
         if(str.startsWith("create-")){
             int idx=str.indexOf("-");
+            send.setChat(true);
+            receive.setChat(true);
             send.setRoom(true);
             receive.setRoom(true);
             return Integer.parseInt(str.substring(idx+1));
         }
+        System.out.println("cr:"+str);
         return 0;
     }
     public static int joinRoom(String RID,ClientSend send,ClientReceive receive){
@@ -86,6 +89,8 @@ public class Client {
         String str=receive.receive();
         System.out.println(str);
         if (str.equals("join-success")){
+            send.setChat(true);
+            receive.setChat(true);
             send.setRoom(true);
             receive.setRoom(true);
             return 1;
@@ -98,6 +103,8 @@ public class Client {
         String str=receive.receive();
         System.out.println(str);
         if (str.equals("join-success")){
+            send.setChat(true);
+            receive.setChat(true);
             send.setRoom(true);
             receive.setRoom(true);
             return 1;
@@ -105,5 +112,25 @@ public class Client {
         else if(str.equals("wrong-password"))
             return -1;
         return 0;
+    }
+    public static String[][] getUserList(String selfname,ClientSend send,ClientReceive receive){
+        String param="-get user:"+selfname;
+        send.send(param);
+        String str=receive.receive();
+        System.out.println(str);
+        String[][] users=null;
+        if(str.startsWith("~user list:")){
+            int idx = str.indexOf(":");
+            str=str.substring(idx+1);
+            String[] user=str.split(",");
+            users=new String[user.length][1];
+            for(int i=0;i<user.length;i++){
+                users[i][0]=user[i];
+            }
+        }
+        return users;
+    }
+    public static void deleteUser(String name,ClientSend send){
+        send.send("-del "+name);
     }
 }
