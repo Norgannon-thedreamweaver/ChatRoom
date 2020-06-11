@@ -63,21 +63,21 @@ public class ClientSend implements Runnable{
     public synchronized void run() {
         while(isRunning){
             System.out.println("send start");
-            while(!isLogin){
+            while(!isLogin&&isRunning){
                 try {
                     wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            while(!isRoom){
+            while(!isRoom&&isRunning){
                 try {
                     wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            while(isChat) {
+            while(isChat&&isRunning) {
                 try {
                     wait();
                 } catch (InterruptedException e) {

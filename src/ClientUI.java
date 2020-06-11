@@ -673,10 +673,20 @@ class RoomUI{
                             ClientUI.getClientUI().Room2Chat(Integer.parseInt(rid));
                             System.out.println("join room");
                         }
-                        else if(ret==0)
+                        else if(ret==0){
+                            JOptionPane.showMessageDialog(panel,"未找到房间","加入房间异常",JOptionPane.PLAIN_MESSAGE);
+                            RID.setText("");
+                            password.setText("");
                             System.out.println("room not found");
-                        else if(ret==-1)
+                        }
+
+                        else if(ret==-1){
+                            JOptionPane.showMessageDialog(panel,"房间密码错误","加入房间异常",JOptionPane.PLAIN_MESSAGE);
+                            RID.setText("");
+                            password.setText("");
                             System.out.println("wrong password");
+                        }
+
                     }
                 }
             }
@@ -1065,7 +1075,7 @@ class ChatUI{
     	output.setBounds(10,10,530,390);
     	inputarea.setBounds(0,0,520,130);
     	inputarea.setBorder(new MatteBorder(1, 1, 1, 1, new Color(122,138,153)));
-    	info.setBounds(330,100,140,25);
+    	info.setBounds(320,100,140,25);
     	info.setForeground(new Color(145,145,145));
     	send.setBounds(440,100,75,25);
 

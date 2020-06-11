@@ -70,21 +70,21 @@ public class ClientReceive implements Runnable{
     public synchronized void run() {
         while(isRunning){
             System.out.println("receive start");
-            while(!isLogin){
+            while(!isLogin&&isRunning){
                 try {
                     wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            while(!isRoom){
+            while(!isRoom&&isRunning){
                 try {
                     wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            while(isChat) {
+            while(isChat&&isRunning) {
                 String msg = this.receive();
                 if(!msg.equals("")) {
                     System.out.println(msg);
