@@ -5,6 +5,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * 这个类是聊天室
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 public class Room implements Runnable{
     boolean isRunning;
     int RID;
@@ -23,11 +28,21 @@ public class Room implements Runnable{
             this.RID = new Random().nextInt(9000) + 1000;
         } while (Server.checkRoomExist(this.RID));
     }
+    /**
+     * 为当前聊天室添加用户
+     * @param client 用户socket,input client输入流,output client输出流,user 客户端用户,name 用户名
+     * @return Nothing
+     */
     public void addMember(Socket client,DataInputStream input,DataOutputStream output,User user,String name){
         RoomThread roommember=new RoomThread(client,input,output,user,name,this.RID,this);
         this.MemberList.add(roommember);
         new Thread(roommember).start();
     }
+    /**
+     * 为当前聊天室删除用户
+     * @param name 用户名
+     * @return Nothing
+     */
     public void removeMember(String name){
         RoomThread m=getMemberByName(name);
         if(m!=null){
@@ -35,9 +50,19 @@ public class Room implements Runnable{
 
         }
     }
+    /**
+     * 获取聊天室用户列表
+     * @return ArrayList<RoomThread> 用户列表
+     * 
+     */
     public ArrayList<RoomThread> getMemberList(){
         return this.MemberList;
     }
+    /**
+     * 获取String格式聊天室用户列表
+     * @return String 用户列表
+     * 
+     */
     public String getMemberString(){
         StringBuilder ret= new StringBuilder("~user list:");
         for(RoomThread member:this.MemberList){
@@ -46,6 +71,12 @@ public class Room implements Runnable{
         }
         return ret.toString();
     }
+    /**
+     * 根据用户名获取用户线程
+     * @param name 用户名
+     * @return RoomThread 用户线程
+     * 
+     */
     public RoomThread getMemberByName(String name){
         for(RoomThread member:this.MemberList){
             if(member.getName().equals(name))
@@ -53,6 +84,11 @@ public class Room implements Runnable{
         }
         return null;
     }
+    /**
+     * 关闭当前房间
+     * @return Nothing
+     * 
+     */
     public void shutdown(){
         this.isRunning=false;
         System.out.println("ready to shutdown");
@@ -74,6 +110,11 @@ public class Room implements Runnable{
             e.printStackTrace();
         }
     }
+    /**
+     * 结束当前线程
+     * @return Nothing
+     * 
+     */
     public void release() {
         Server.getAllRoom().remove(this);
 

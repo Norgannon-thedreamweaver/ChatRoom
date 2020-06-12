@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Pattern;
 
+/**
+ * 这个类是服务端线程
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 public class ServerThread implements Runnable{
     private DataInputStream input;
     private DataOutputStream output;
@@ -36,7 +41,11 @@ public class ServerThread implements Runnable{
         System.out.println(this.name+"回来了");
     }
 
-    //接收消息
+    /**
+     * 从输入流接收消息
+     * @return String 接收到的消息
+     * 
+     */
     public String receive() {
         String msg = "";
         try {
@@ -47,7 +56,11 @@ public class ServerThread implements Runnable{
         }
         return msg;
     }
-    //发送消息
+    /**
+     * 向输出流发送消息
+     * @param msg 要发送的消息
+     * 
+     */
     public void send(String msg) {
         try {
             output.writeUTF(msg);
@@ -58,7 +71,11 @@ public class ServerThread implements Runnable{
         }
     }
 
-    //关闭
+    /**
+     * 关闭服务端
+     * @return Nothing
+     * 
+     */
     public void release() {
         this.isRunning = false;
         try {
@@ -72,6 +89,12 @@ public class ServerThread implements Runnable{
         Server.getServerThread().remove(this);
 
     }
+    /**
+     * 创建聊天室
+     * @param secret 是否是私密聊天室,password 聊天室密码
+     * @return Nothing
+     * 
+     */
     public void createRoom(boolean secret,String password){
         Room room=new Room(secret,password);
         Server.getAllRoom().add(room);
@@ -82,6 +105,12 @@ public class ServerThread implements Runnable{
         this.send("create-"+room.RID);
 
     }
+    /**
+     * 加入聊天室
+     * @param RID 房间号
+     * @return Nothing
+     * 
+     */
     public void joinRoom(int RID){
         Room room=Server.getRoomByRID(RID);
         if(room!=null&&!room.secret){
@@ -94,6 +123,12 @@ public class ServerThread implements Runnable{
             this.send("no-room-found");
         }
     }
+    /**
+     * 加入聊天室
+     * @param RID 房间号,password 密码
+     * @return Nothing
+     * 
+     */
     public void joinRoom(int RID,String password){
         Room room=Server.getRoomByRID(RID);
         if(room!=null&&room.secret){
@@ -110,6 +145,12 @@ public class ServerThread implements Runnable{
             this.send("no-room-found");
         }
     }
+    /**
+     * 登录
+     * @param username 用户名,password 密码
+     * @return Nothing
+     * 
+     */
     public void Login(String username,String password){
         if(UserList.getUserList().UserLogin(username,password)==1){
             this.send("login-success");
@@ -120,6 +161,12 @@ public class ServerThread implements Runnable{
             this.send("login-fail");
         }
     }
+    /**
+     * 注册
+     * @param username 用户名,password 密码
+     * @return Nothing
+     * 
+     */
     public void Signup(String username,String password){
         if(UserList.getUserList().UserSignup(username,password)==1){
         	//System.out.println("here");
@@ -129,6 +176,12 @@ public class ServerThread implements Runnable{
             this.send("signup-fail");
         }
     }
+    /**
+     * 处理接收到的数据
+     * @param msg 接收到的数据
+     * @return Nothing
+     * 
+     */
     public void Command(String msg){
         String[] str=msg.split(" ");
         System.out.println("cmd:"+msg);

@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * 这个类是聊天室线程
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 public class RoomThread implements Runnable{
     private final int RID;
     private final Room room;
@@ -50,7 +55,11 @@ public class RoomThread implements Runnable{
         }
     }
 
-    //接收消息
+    /**
+     * 从输入流接收消息
+     * @return String 接收到的消息
+     * 
+     */
     public String receive() {
         String msg = "";
         try {
@@ -61,7 +70,12 @@ public class RoomThread implements Runnable{
         }
         return msg;
     }
-    //发送消息
+    /**
+     * 向输出流发送消息
+     * @param msg 要发送的消息
+     * @return Nothing
+     * 
+     */
     public synchronized void send(String msg) {
         try {
             output.writeUTF(msg);
@@ -71,7 +85,13 @@ public class RoomThread implements Runnable{
             release();
         }
     }
-
+    
+    /**
+     * 发送私聊消息
+     * @param name 对象名称,message 要发送的消息
+     * @return Nothing
+     * 
+     */
     public void sendPrivate(String name,String message){
         RoomThread to=this.room.getMemberByName(name);
         if(to!=null){
@@ -80,6 +100,12 @@ public class RoomThread implements Runnable{
         }
 
     }
+    /**
+     * 发送公共消息
+     * @param message 要发送的消息,isSys 是否是系统消息
+     * @return Nothing
+     * 
+     */
     public void sendPublic(String message,boolean isSys){
         for(RoomThread member:this.room.getMemberList()) {
             if(!isSys) {
@@ -89,6 +115,12 @@ public class RoomThread implements Runnable{
             }
         }
     }
+    /**
+     * 处理接收到的数据
+     * @param cmd 接收到的数据
+     * @return Nothing
+     * 
+     */
     public void Command(String cmd){
         String[] str=cmd.split(" ");
         if(str.length==1&&str[0].equals("-shutdown"))
@@ -118,6 +150,12 @@ public class RoomThread implements Runnable{
         else
             this.send("wrong cmd");
     }
+    /**
+     * 发送消息
+     * @param msg 要发送的消息,isSys 是否是系统消息
+     * @return Nothing
+     * 
+     */
     public void sendMessage(String msg,boolean isSys) {
         boolean isPrivate = msg.startsWith("@");
         boolean isCmd=msg.startsWith("-");
@@ -136,12 +174,21 @@ public class RoomThread implements Runnable{
             sendPublic(msg,isSys);
         }
     }
+    /**
+     * 退出聊天室关闭聊天室线程
+     * @return Nothing
+     * 
+     */
     public void close(){
         ServerThread new_server=new ServerThread(client,input,output,user,name);
         Server.getServerThread().add(new_server);
         new Thread(new_server).start();
     }
-    //关闭
+    /**
+     * 关闭线程
+     * @return Nothing
+     * 
+     */
     public synchronized void release() {
         this.isRunning = false;
         try {

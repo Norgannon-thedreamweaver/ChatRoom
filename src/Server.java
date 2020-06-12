@@ -5,6 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * 这个类是服务端
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 public class Server {
     private int port;
     private static ArrayList<ServerThread> allThread = new ArrayList<ServerThread>();
@@ -24,7 +29,11 @@ public class Server {
     public static ArrayList<Room> getAllRoom(){
         return allRoom;
     }
-
+    /**
+     * 检查房间是否存在
+     * @param RID 房间号
+     * @return boolean 存在为true，否则为false
+     */
     public static boolean checkRoomExist(int RID){
         for(Room room:allRoom){
             if(room.RID==RID)
@@ -32,6 +41,11 @@ public class Server {
         }
         return false;
     }
+    /**
+     * 根据房间号获得房间
+     * @param RID 房间号
+     * @return Room 返回对应的房间号，不存在返回null
+     */
     public static Room getRoomByRID(int RID){
         for(Room room:allRoom){
             if(room.RID==RID)

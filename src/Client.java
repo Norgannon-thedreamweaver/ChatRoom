@@ -6,8 +6,13 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * 这个类启动客户端
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 public class Client {
-    public static void main(String[] args) throws UnknownHostException, IOException {
+    public static void main(String[] args){
         System.out.println("------client------");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -27,7 +32,7 @@ public class Client {
                 ClientUI.getClientUI().CE2Login();
                 System.out.println("服务器连接成功");
             }
-            catch (ConnectException e){
+            catch (IOException e){
                 ClientUI.getClientUI().init2CE();
                 System.out.println("服务器连接失败");
             }
@@ -36,6 +41,11 @@ public class Client {
             }
         }
     }
+    /**
+     * 这个方法将登录表单发送到客户端，并根据返回结果判断登录状态
+     * @param username 用户输入的账号,password 用户输入的密码,send 发消息线程,receive 收消息线程
+     * @return boolean 登录是否成功,成功为true
+     */
     public static boolean login(String username,String password,ClientSend send,ClientReceive receive){
         String param="login "+username+" "+password;
         send.send(param);
@@ -48,6 +58,11 @@ public class Client {
         }
         return false;
     }
+    /**
+     * 这个方法将注册表单发送到客户端，并根据返回结果判断注册状态
+     * @param username 用户输入的账号,password 用户输入的密码,send 发消息线程,receive 收消息线程
+     * @return boolean 注册是否成功,成功为true
+     */
     public static boolean signup(String username,String password,ClientSend send,ClientReceive receive){
         //System.out.println("here");
     	String param="signup "+username+" "+password;
@@ -61,6 +76,11 @@ public class Client {
         }
         return false;
     }
+    /**
+     * 这个方法将创建聊天室表单发送到客户端，并返回房间号
+     * @param secret 表示是否为私密聊天室,私密为true,password 房间密码,send 发消息线程,receive 收消息线程
+     * @return int 创建成功返回聊天室id，创建失败返回0
+     */
     public static int createRoom(boolean secret,String password,ClientSend send,ClientReceive receive){
         String param="create ";
         if(secret)
@@ -82,6 +102,11 @@ public class Client {
         }
         return 0;
     }
+    /**
+     * 这个方法将加入公共聊天室表单发送到客户端，并返回加入结果
+     * @param RID 聊天室id,send 发消息线程,receive 收消息线程
+     * @return int 加入聊天室成功返回1，否则返回0
+     */
     public static int joinRoom(String RID,ClientSend send,ClientReceive receive){
         String param="join -public "+RID;
         send.send(param);
@@ -96,6 +121,11 @@ public class Client {
         }
         return 0;
     }
+    /**
+     * 这个方法将加入私密聊天室表单发送到客户端，并返回加入结果
+     * @param RID 聊天室id,password 房间密码,send 发消息线程,receive 收消息线程
+     * @return int 加入聊天室成功返回1，密码错误返回-1，其他情况返回0
+     */
     public static int joinRoom(String RID,String password,ClientSend send,ClientReceive receive){
         String param="join -private "+password+" "+RID;
         send.send(param);
@@ -112,6 +142,11 @@ public class Client {
             return -1;
         return 0;
     }
+    /**
+     * 这个方法将用于获取房间内全部用户
+     * @param selfname 本用户用户名,send 发消息线程,receive 收消息线程
+     * @return String[][] 全部用户用户名
+     */
     public static String[][] getUserList(String selfname,ClientSend send,ClientReceive receive){
         String param="-get user:"+selfname;
         send.send(param);
@@ -129,6 +164,11 @@ public class Client {
         }
         return users;
     }
+    /**
+     * 这个方法将用于从房间内踢出用户
+     * @param name 被踢出用户用户名,send 发消息线程
+     * @return Nothing
+     */
     public static void deleteUser(String name,ClientSend send){
         send.send("-del "+name);
     }

@@ -1,7 +1,11 @@
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
-
+/**
+ * 这个类是收消息线程类
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 public class ClientReceive implements Runnable{
     private static ClientReceive self=null;
     private DataInputStream input;
@@ -54,7 +58,10 @@ public class ClientReceive implements Runnable{
     public static ClientReceive getClientReceive(){
         return self;
     }
-    //接收消息
+    /**
+     * 这个方法从服务端接收消息
+     * @return String 接收到的消息
+     */
     public synchronized String receive() {
         String msg = "";
         try {
@@ -66,6 +73,10 @@ public class ClientReceive implements Runnable{
         return msg;
     }
 
+    /**
+     * 重写run方法
+     * @return Nothing
+     */
     @Override
     public synchronized void run() {
         while(isRunning){
@@ -94,6 +105,11 @@ public class ClientReceive implements Runnable{
         }
 
     }
+    /**
+     * 这个方法从客户端接收数据并处理
+     * @param msg 接收到的数据
+     * @return Nothing
+     */
     public void Command(String msg){
         if(msg.startsWith("~user list:")){
             int idx = msg.indexOf(":");
@@ -115,7 +131,10 @@ public class ClientReceive implements Runnable{
             ClientUI.getClientUI().getChat().addstring(msg+"\n\n");
         }
     }
-    //关闭
+    /**
+     * 程序退出时结束线程，异常出现时自动执行
+     * @return Nothing
+     */
     private void release() {
         this.isRunning = false;
         try {

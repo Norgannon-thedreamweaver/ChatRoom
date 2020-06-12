@@ -5,7 +5,11 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-
+/**
+ * 这个类开始运行服务端
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 public class ServerStart {
 
 

@@ -6,6 +6,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.regex.Pattern;
 
+/**
+ * 这个类加载客户端UI
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 public class ClientUI {
     private static ClientUI self=new ClientUI();
     private boolean isConnect=false;
@@ -92,10 +97,17 @@ public class ClientUI {
         isAdmin = admin;
     }
 
-
+    /**
+     * 实现从初始窗口到网络错误窗口的跳转
+     * @return Nothing
+     */
     public void init2CE(){
         frame.add(CEPanel);
     }
+    /**
+     * 实现从网络错误窗口到登录窗口的跳转
+     * @return Nothing
+     */
     public void CE2Login(){
         frame.remove(CEPanel);
         frame.add(loginPanel);
@@ -103,6 +115,10 @@ public class ClientUI {
         roomPanel.updateUI();
         setConnect(true);
     }
+    /**
+     * 实现从登录窗口到进入房间窗口的跳转
+     * @return Nothing
+     */
     public void Login2Room(){
         frame.remove(loginPanel);
         frame.add(roomPanel);
@@ -110,6 +126,10 @@ public class ClientUI {
         roomPanel.updateUI();
         setLogin(true);
     }
+    /**
+     * 实现从登录窗口到登录失败窗口的跳转
+     * @return Nothing
+     */
     public void Login2LoginFail(){
         frame.remove(loginPanel);
         frame.add(loginfailPanel);
@@ -117,6 +137,10 @@ public class ClientUI {
         loginfailPanel.updateUI();
         setLogin(true);
     }
+    /**
+     * 实现从登录窗口到注册成功窗口的跳转
+     * @return Nothing
+     */
     public void Login2SignupSuccess(){
         frame.remove(loginPanel);
         frame.add(signupsuccessPanel);
@@ -124,6 +148,10 @@ public class ClientUI {
         signupsuccessPanel.updateUI();
         setLogin(true);
     }
+    /**
+     * 实现从登录窗口到注册失败窗口的跳转
+     * @return Nothing
+     */
     public void Login2SignupFail(){
         frame.remove(loginPanel);
         frame.add(signupfailPanel);
@@ -131,6 +159,10 @@ public class ClientUI {
         signupfailPanel.updateUI();
         setLogin(true);
     }
+    /**
+     * 实现从注册成功到登录窗口的跳转
+     * @return Nothing
+     */
     public void SignupSuccess2Login(){
     	frame.remove(signupsuccessPanel);
         frame.add(loginPanel);
@@ -138,6 +170,10 @@ public class ClientUI {
         loginPanel.updateUI();
         setLogin(false);
     }
+    /**
+     * 实现从注册失败到登录窗口的跳转
+     * @return Nothing
+     */
     public void SignupFail2Login(){
     	frame.remove(signupfailPanel);
         frame.add(loginPanel);
@@ -145,6 +181,10 @@ public class ClientUI {
         loginPanel.updateUI();
         setLogin(false);
     }
+    /**
+     * 实现从登录失败到登录窗口的跳转
+     * @return Nothing
+     */
     public void LoginFail2Login(){
     	frame.remove(loginfailPanel);
         frame.add(loginPanel);
@@ -152,6 +192,10 @@ public class ClientUI {
         loginPanel.updateUI();
         setLogin(false);
     }
+    /**
+     * 实现从进入房间窗口到聊天室窗口的跳转
+     * @return Nothing
+     */
     public void Room2Chat(int rid){
         frame.remove(roomPanel);
         frame.setSize(810,600);
@@ -166,6 +210,10 @@ public class ClientUI {
         RID=rid;
         setRoomConnect(true);
     }
+    /**
+     * 实现从聊天室窗口到进入房间窗口的跳转
+     * @return Nothing
+     */
     public void Chat2Room(){
         System.out.println("Chat2Room");
         frame.remove(chatroomPanel);
@@ -202,6 +250,11 @@ public class ClientUI {
         frame.setVisible(true);
     }
 }
+/**
+ * 这个类加载注册成功UI
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 class SignupSuccessUI{
     private JPanel jp=new JPanel();
     private JLabel Lable= new JLabel("注册成功");
@@ -221,6 +274,10 @@ class SignupSuccessUI{
     public JPanel getJp(){
         return  jp;
     }
+    /**
+     * 这个类用于监听返回按钮事件
+     * 
+     */
     class BackListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -230,6 +287,11 @@ class SignupSuccessUI{
         }
     }
 }
+/**
+ * 这个类加载注册失败UI
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 class SignupFailUI{
     private JPanel jp=new JPanel();
     private JLabel Lable= new JLabel("注册失败");
@@ -249,6 +311,10 @@ class SignupFailUI{
     public JPanel getJp(){
         return  jp;
     }
+    /**
+     * 这个类用于监听返回按钮事件
+     * 
+     */
     class BackListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -258,6 +324,11 @@ class SignupFailUI{
         }
     }
 }
+/**
+ * 这个类加载登录失败UI
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 class LoginFailUI{
     private JPanel jp=new JPanel();
     private JLabel Lable= new JLabel("登录失败");
@@ -277,6 +348,10 @@ class LoginFailUI{
     public JPanel getJp(){
         return  jp;
     }
+    /**
+     * 这个类用于监听返回按钮事件
+     * 
+     */
     class BackListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -286,6 +361,11 @@ class LoginFailUI{
         }
     }
 }
+/**
+ * 这个类加载登录UI
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 class LoginUI{
     private JPanel jp=new JPanel();
     private JLabel userLable= new JLabel("用户名:");
@@ -329,6 +409,10 @@ class LoginUI{
     public JPanel getJp(){
         return  jp;
     }
+    /**
+     * 这个类用于监听登录按钮事件
+     * 
+     */
     class LoginListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -359,6 +443,10 @@ class LoginUI{
             }
         }
     }
+    /**
+     * 这个类用于监听注册按钮事件
+     * 
+     */
     class SignupListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -388,6 +476,10 @@ class LoginUI{
             }
         }
     }
+    /**
+     * 这个类用于监听用户名输入框事件
+     * 
+     */
     class UserChangeListener implements DocumentListener {
 
         @Override
@@ -451,6 +543,10 @@ class LoginUI{
 
         }
     }
+    /**
+     * 这个类用于监听密码输入框事件
+     * 
+     */
     class PasswordChangeListener implements DocumentListener {
 
         @Override
@@ -514,6 +610,10 @@ class LoginUI{
 
         }
     }
+    /**
+     * 这个类用于监听用户名键盘输入事件并限制长度
+     * 
+     */
     class NameTyped implements KeyListener{
         @Override
         public void keyTyped(KeyEvent e) {
@@ -531,6 +631,10 @@ class LoginUI{
 
         }
     }
+    /**
+     * 这个类用于监听密码键盘输入事件并限制长度
+     * 
+     */
     class PassworTyped implements KeyListener{
         @Override
         public void keyTyped(KeyEvent e) {
@@ -548,7 +652,12 @@ class LoginUI{
 
         }
     }
-
+    /**
+     * 检查用户名是否符合要求
+     * @param String 用户名
+     * @return boolean 符合要求返回true，否则为false
+     * 
+     */
     static boolean checkName(String name){
         if(name.equals(""))
             return false;
@@ -556,6 +665,12 @@ class LoginUI{
             return false;
         return true;
     }
+    /**
+     * 检查密码是否符合要求
+     * @param String 密码
+     * @return boolean 符合要求返回true，否则为false
+     * 
+     */
     static boolean checkPassword(String password){
         if(password.equals(""))
             return false;
@@ -564,6 +679,11 @@ class LoginUI{
         return true;
     }
 }
+/**
+ * 这个类加载网络错误UI
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 class ConnectError{
     private JPanel CE= new JPanel();
     private JLabel info= new JLabel("网络错误");
@@ -579,6 +699,11 @@ class ConnectError{
         return CE;
     }
 }
+/**
+ * 这个类加载选择房间UI
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 class RoomUI{
     private JPanel panel=new JPanel();
     private JRadioButton RB01=new JRadioButton("创建房间",true),RB02=new JRadioButton("加入房间");
@@ -631,6 +756,10 @@ class RoomUI{
         password.addKeyListener(new PassworTyped());
         submit.addActionListener(new RoomListener());
     }
+    /**
+     * 这个类监听提交按钮
+     * 
+     */
     class RoomListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -692,6 +821,10 @@ class RoomUI{
             }
         }
     }
+    /**
+     * 这个类监听房间类型
+     * 
+     */
     class RBChangeListener implements ChangeListener {
         @Override
         public void stateChanged(ChangeEvent e) {
@@ -758,6 +891,10 @@ class RoomUI{
             }
         }
     }
+    /**
+     * 这个类监听房间号输入框
+     * 
+     */
     class RIDChangeListener implements DocumentListener {
 
         @Override
@@ -853,6 +990,10 @@ class RoomUI{
 
         }
     }
+    /**
+     * 这个类监听密码输入框
+     * 
+     */
     class PasswordChangeListener implements DocumentListener {
 
         @Override
@@ -948,6 +1089,10 @@ class RoomUI{
 
         }
     }
+    /**
+     * 这个类监听房间号输入并限制长度
+     * 
+     */
     class RIDTyped implements KeyListener{
         @Override
         public void keyTyped(KeyEvent e) {
@@ -965,6 +1110,10 @@ class RoomUI{
 
         }
     }
+    /**
+     * 这个类监听密码输入并限制长度
+     * 
+     */
     class PassworTyped implements KeyListener{
         @Override
         public void keyTyped(KeyEvent e) {
@@ -982,6 +1131,12 @@ class RoomUI{
 
         }
     }
+    /**
+     * 检查房间号是否符合要求
+     * @param String 房间号
+     * @return boolean 符合要求返回true，否则为false
+     * 
+     */
     static boolean checkRID(String rid){
         if(rid.length()!=4)
             return false;
@@ -989,6 +1144,12 @@ class RoomUI{
             return false;
         return true;
     }
+    /**
+     * 检查密码是否符合要求
+     * @param String 密码
+     * @return boolean 符合要求返回true，否则为false
+     * 
+     */
     static boolean checkPassword(String password){
         if(password.equals(""))
             return false;
@@ -997,6 +1158,12 @@ class RoomUI{
         return true;
     }
 }
+
+/**
+ * 这个类加聊天室背景UI
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 class ChatRoomUI{
     ChatUI chat=new ChatUI();
     UserListUI user;
@@ -1031,6 +1198,11 @@ class ChatRoomUI{
         return userpanel;
     }
 }
+/**
+ * 这个类加载聊天室文本区UI
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 class ChatUI{
     JPanel jp=new JPanel();
 	// 创建文本区域组件
@@ -1083,6 +1255,10 @@ class ChatUI{
         inputarea.addKeyListener(new InputTyped());
         send.addActionListener(new SendListener());
     }
+    /**
+     * 这个类监听文本输入变化
+     * 
+     */
     class InputChangeListener implements DocumentListener{
 
         @Override
@@ -1106,6 +1282,10 @@ class ChatUI{
             layer.repaint();
         }
     }
+    /**
+     * 这个类监听文本输入事件
+     * 
+     */
     class InputTyped implements KeyListener{
         @Override
         public void keyTyped(KeyEvent e) {
@@ -1137,12 +1317,21 @@ class ChatUI{
             layer.repaint();
         }
     }
+    /**
+     * 这个类监听发送按钮
+     * 
+     */
     class SendListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             sendButton();
         }
     }
+    /**
+     * 用于发送消息
+     * @return Nothing
+     * 
+     */
     public void sendButton(){
         String input=inputarea.getText();
         ClientSend s=ClientSend.getClientSend();
@@ -1153,13 +1342,23 @@ class ChatUI{
             outputarea.setCaretPosition(outputarea.getDocument().getLength());
         }
     }
-    //接受字符串
+    /**
+     * 接受字符串
+     * @param String 接收到的字符串
+     * @return true
+     * 
+     */
     public boolean addstring(String str)
     {
     	this.outputarea.append(str);
     	return true;
     }
 }
+/**
+ * 这个类加载聊天室用户列表UI
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 class UserListUI {
     private static UserListUI self=null;
     private JPanel panel=new JPanel();
@@ -1216,12 +1415,17 @@ class UserListUI {
         if(model!=null)
             model.setDataVector(newlist, new String[]{"在线用户"});
     }
+    /**
+     * 这个类用于显示对选中用户的操作列表
+     * 
+     */
     class JPOP{
         JPopupMenu pop = new JPopupMenu();// 弹出菜单对象
         JMenuItem mi_admin = new JMenuItem("设为管理员");
         JMenuItem mi_send=new JMenuItem("私信");
         JMenuItem mi_del= new JMenuItem("移除");
         boolean isAdmin;
+
         public JPOP(boolean isAdmin){
             this.isAdmin=isAdmin;
             mi_admin.setActionCommand("admin");
@@ -1241,6 +1445,11 @@ class UserListUI {
             pop.add(mi_send);
             pop.add(mi_del);
         }
+        /**
+         * 判断列表中操作是否可行
+         * @return Nothing
+         * 
+         */
         public void update(){
             if(list.getSelectedRow()!=-1&&list.getValueAt(list.getSelectedRow(),0).equals(ClientUI.getClientUI().getName())){
                 mi_send.setEnabled(false);
@@ -1256,6 +1465,12 @@ class UserListUI {
             }
         }
     }
+    /**
+     * 执行选中的操作
+     * @param String 操作名称
+     * @return Nothing
+     * 
+     */
     private void popMenuAction(String command) {
         // 得到在表格上选中的行
         final int selectIndex = list.getSelectedRow();
@@ -1282,6 +1497,10 @@ class UserListUI {
         // 刷新表格
         //SwingUtilities.updateComponentTreeUI(list);
     }
+    /**
+     * 用于判断鼠标位置和鼠标事件
+     *
+     */
     class TableMouse extends MouseAdapter {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             if (evt.getButton() == java.awt.event.MouseEvent.BUTTON3) {
@@ -1308,6 +1527,10 @@ class UserListUI {
             }
         }
     }
+    /**
+     * 这个类用于监听关闭房间按钮
+     *
+     */
     class CloseListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -1318,6 +1541,10 @@ class UserListUI {
             }
         }
     }
+    /**
+     * 这个类用于监听离开房间按钮
+     *
+     */
     class LeaveListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {

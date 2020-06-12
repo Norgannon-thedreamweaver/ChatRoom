@@ -3,7 +3,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-
+/**
+ * 这个类是发消息线程类
+ * @author 李晓洲，邢湧喆，王博瑞
+ * 
+ */
 public class ClientSend implements Runnable{
     private static ClientSend self=null;
     private BufferedReader console;
@@ -60,6 +64,10 @@ public class ClientSend implements Runnable{
         return self;
     }
 
+    /**
+     * 重写run方法
+     * @return Nothing
+     */
     @Override
     public synchronized void run() {
         while(isRunning){
@@ -90,7 +98,10 @@ public class ClientSend implements Runnable{
     }
 
     /**
-     * 发送消息
+     * 这个方法向服务端发送消息
+     * @param msg 要发送的消息
+     * @return Nothing
+     * 
      */
     public synchronized void send(String msg) {
         try {
@@ -103,7 +114,9 @@ public class ClientSend implements Runnable{
     }
 
     /**
-     * 从控制台获取消息
+     * 这个方法从控制台获取消息
+     * @return String 获取的消息
+     * 
      */
     private String getStringFromConsole() {
         try {
@@ -115,7 +128,10 @@ public class ClientSend implements Runnable{
         return "";
     }
 
-    //关闭
+    /**
+     * 程序退出时结束线程，异常出现时自动执行
+     * @return Nothing
+     */
     private void release() {
         this.isRunning = false;
         try {
