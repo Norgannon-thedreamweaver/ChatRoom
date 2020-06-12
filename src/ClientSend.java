@@ -59,6 +59,7 @@ public class ClientSend implements Runnable{
     public static ClientSend getClientSend(){
         return self;
     }
+
     @Override
     public synchronized void run() {
         while(isRunning){

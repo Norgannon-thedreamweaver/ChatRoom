@@ -210,12 +210,12 @@ class SignupSuccessUI{
     public SignupSuccessUI(){
         jp.add(Lable);
         jp.add(back);
-        
+
         jp.setLayout(null);
         jp.setPreferredSize(new Dimension(250, 300));
         Lable.setBounds(95,80,150,25);
         back.setBounds(63,140,120,25);
-        
+
         back.addActionListener(new BackListener());
     }
     public JPanel getJp(){
@@ -238,12 +238,12 @@ class SignupFailUI{
     public SignupFailUI(){
         jp.add(Lable);
         jp.add(back);
-        
+
         jp.setLayout(null);
         jp.setPreferredSize(new Dimension(250, 300));
         Lable.setBounds(95,80,150,25);
         back.setBounds(63,140,120,25);
-        
+
         back.addActionListener(new BackListener());
     }
     public JPanel getJp(){
@@ -266,12 +266,12 @@ class LoginFailUI{
     public LoginFailUI(){
         jp.add(Lable);
         jp.add(back);
-        
+
         jp.setLayout(null);
         jp.setPreferredSize(new Dimension(250, 300));
         Lable.setBounds(95,80,150,25);
         back.setBounds(63,140,120,25);
-        
+
         back.addActionListener(new BackListener());
     }
     public JPanel getJp(){
@@ -603,7 +603,7 @@ class RoomUI{
         RID.setVisible(false);RIDLable.setVisible(false);
         password.setVisible(false);passwordLable.setVisible(false);
         panel.add(submit);
-        
+
         panel.setLayout(null);
         RB01.setBounds(30,10,100,25);
         RB02.setBounds(150,10,100,25);
