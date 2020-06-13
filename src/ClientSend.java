@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -138,6 +139,14 @@ public class ClientSend implements Runnable{
             this.output.close();
             this.console.close();
             this.client.close();
+            int result = JOptionPane.showConfirmDialog(
+                    ClientUI.getClientUI().getFrame(),
+                    "网络错误,即将退出",
+                    "提示",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            System.out.println("选择结果: " + result);
+            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }

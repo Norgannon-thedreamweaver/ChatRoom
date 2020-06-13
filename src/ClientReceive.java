@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -140,6 +141,14 @@ public class ClientReceive implements Runnable{
         try {
             this.input.close();
             this.client.close();
+            int result = JOptionPane.showConfirmDialog(
+                    ClientUI.getClientUI().getFrame(),
+                    "网络错误,即将退出",
+                    "提示",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            System.out.println("选择结果: " + result);
+            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
