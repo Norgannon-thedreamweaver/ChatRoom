@@ -46,7 +46,7 @@ public class Client {
      * @param username 用户输入的账号,password 用户输入的密码,send 发消息线程,receive 收消息线程
      * @return boolean 登录是否成功,成功为true
      */
-    public static boolean login(String username,String password,ClientSend send,ClientReceive receive){
+    public static int login(String username,String password,ClientSend send,ClientReceive receive){
         String param="login "+username+" "+password;
         send.send(param);
         String str=receive.receive();
@@ -54,9 +54,12 @@ public class Client {
         if(str.equals("login-success")){
             send.setLogin(true);
             receive.setLogin(true);
-            return true;
+            return 1;
         }
-        return false;
+        else if(str.equals("login-fail-no-user"))
+            return -1;
+        else
+            return -2;
     }
     /**
      * 这个方法将注册表单发送到客户端，并根据返回结果判断注册状态

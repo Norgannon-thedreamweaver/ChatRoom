@@ -34,14 +34,24 @@ public class ClientUI {
     private ClientUI() {
         frame = new JFrame("Login");
         frame.setSize(250, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                int option = JOptionPane.showConfirmDialog(null, "是否退出?",
+                        "系统提示", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (option == JOptionPane.YES_OPTION)
+                    System.exit(0);
+            }
+        });
 
         loginPanel = new LoginUI().getJp();
         CEPanel = new ConnectError().getCE();
         roomPanel = new RoomUI().getPanel();
         signupsuccessPanel=new SignupSuccessUI().getJp();
-        signupfailPanel=new SignupFailUI().getJp();
-        loginfailPanel=new LoginFailUI().getJp();
+        signupfailPanel=new SignupFailUI("注册失败").getJp();
+
     }
     public static ClientUI getClientUI(){
         return self;
@@ -130,7 +140,8 @@ public class ClientUI {
      * 实现从登录窗口到登录失败窗口的跳转
      * @return Nothing
      */
-    public void Login2LoginFail(){
+    public void Login2LoginFail(String msg){
+        loginfailPanel=new LoginFailUI(msg).getJp();
         frame.remove(loginPanel);
         frame.add(loginfailPanel);
         loginfailPanel.revalidate();
@@ -294,10 +305,11 @@ class SignupSuccessUI{
  */
 class SignupFailUI{
     private JPanel jp=new JPanel();
-    private JLabel Lable= new JLabel("注册失败");
+    private JLabel Lable;
     private JButton back=new JButton("返回登录页面");
 
-    public SignupFailUI(){
+    public SignupFailUI(String msg){
+        Lable= new JLabel(msg);
         jp.add(Lable);
         jp.add(back);
 
@@ -331,10 +343,11 @@ class SignupFailUI{
  */
 class LoginFailUI{
     private JPanel jp=new JPanel();
-    private JLabel Lable= new JLabel("登录失败");
+    private JLabel Lable;
     private JButton back=new JButton("返回登录页面");
 
-    public LoginFailUI(){
+    public LoginFailUI(String msg){
+        Lable= new JLabel(msg);
         jp.add(Lable);
         jp.add(back);
 
@@ -427,14 +440,20 @@ class LoginUI{
                     System.out.println(u);
                     System.out.println(p);
                     System.out.println("Login button pressed");
-                    if(Client.login(username.getText(),new String(password.getPassword()),ClientSend.getClientSend(),ClientReceive.getClientReceive())){
+                    int ret=Client.login(username.getText(),new String(password.getPassword()),ClientSend.getClientSend(),ClientReceive.getClientReceive());
+                    if(ret==1){
                         ClientUI.getClientUI().Login2Room();
                         ClientUI.getClientUI().setName(u);
                         System.out.println("login seccess");
                     }
+                    else if(ret==-1)
+                    {
+                    	ClientUI.getClientUI().Login2LoginFail("用户不存在");
+                        System.out.println("login fail");
+                    }
                     else
                     {
-                    	ClientUI.getClientUI().Login2LoginFail();
+                        ClientUI.getClientUI().Login2LoginFail("密码错误");
                         System.out.println("login fail");
                     }
 

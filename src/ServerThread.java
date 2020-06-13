@@ -152,13 +152,17 @@ public class ServerThread implements Runnable{
      * 
      */
     public void Login(String username,String password){
-        if(UserList.getUserList().UserLogin(username,password)==1){
+        int ret=UserList.getUserList().UserLogin(username,password);
+        if(ret==1){
             this.send("login-success");
             this.name=username;
             this.user=UserList.getUserList().getUserByName(name);
         }
+        else if(ret==-1){
+            this.send("login-fail-no-user");
+        }
         else{
-            this.send("login-fail");
+            this.send("login-fail-wrong-password");
         }
     }
     /**
