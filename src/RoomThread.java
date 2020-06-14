@@ -138,6 +138,7 @@ public class RoomThread implements Runnable{
             this.room.getMemberList().remove(this);
             this.send("~close");
             this.isRunning=false;
+            this.sendMessage(name+"离开了房间",true);
             this.sendMessage(this.room.getMemberString(),true);
         }
         else if(str.length==1&&str[0].startsWith("-forceleave")){

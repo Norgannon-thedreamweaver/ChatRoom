@@ -130,6 +130,7 @@ public class ClientUI {
      * @return Nothing
      */
     public void Login2Room(){
+        frame.setTitle("Room");
         frame.remove(loginPanel);
         frame.add(roomPanel);
         roomPanel.revalidate();
@@ -141,6 +142,7 @@ public class ClientUI {
      * @return Nothing
      */
     public void Login2LoginFail(String msg){
+        frame.setTitle("Login Error");
         loginfailPanel=new LoginFailUI(msg).getJp();
         frame.remove(loginPanel);
         frame.add(loginfailPanel);
@@ -153,6 +155,7 @@ public class ClientUI {
      * @return Nothing
      */
     public void Login2SignupSuccess(){
+        frame.setTitle("Login Success");
         frame.remove(loginPanel);
         frame.add(signupsuccessPanel);
         signupsuccessPanel.revalidate();
@@ -164,6 +167,7 @@ public class ClientUI {
      * @return Nothing
      */
     public void Login2SignupFail(){
+        frame.setTitle("Signup Error");
         frame.remove(loginPanel);
         frame.add(signupfailPanel);
         signupfailPanel.revalidate();
@@ -175,6 +179,7 @@ public class ClientUI {
      * @return Nothing
      */
     public void SignupSuccess2Login(){
+        frame.setTitle("Signup success");
     	frame.remove(signupsuccessPanel);
         frame.add(loginPanel);
         loginPanel.revalidate();
@@ -186,6 +191,7 @@ public class ClientUI {
      * @return Nothing
      */
     public void SignupFail2Login(){
+        frame.setTitle("Login");
     	frame.remove(signupfailPanel);
         frame.add(loginPanel);
         loginPanel.revalidate();
@@ -197,6 +203,7 @@ public class ClientUI {
      * @return Nothing
      */
     public void LoginFail2Login(){
+        frame.setTitle("Login");
     	frame.remove(loginfailPanel);
         frame.add(loginPanel);
         loginPanel.revalidate();
@@ -208,6 +215,7 @@ public class ClientUI {
      * @return Nothing
      */
     public void Room2Chat(int rid){
+        frame.setTitle("Room:"+rid);
         frame.remove(roomPanel);
         frame.setSize(810,600);
         ChatRoomUI c=new ChatRoomUI(rid,isAdmin,Client.getUserList(name,ClientSend.getClientSend(),ClientReceive.getClientReceive()));
@@ -226,6 +234,7 @@ public class ClientUI {
      * @return Nothing
      */
     public void Chat2Room(){
+        frame.setTitle("Room");
         System.out.println("Chat2Room");
         frame.remove(chatroomPanel);
         frame.setSize(250,300);
@@ -733,7 +742,7 @@ class RoomUI{
     private JLabel passwordLable= new JLabel("密码:");
     private JTextField RID=new JTextField(10);      // 用户名输入框
     private JPasswordField password=new JPasswordField(15);
-    private JButton submit=new JButton("创建");
+    private JButton submit=new JButton("create");
     public JPanel getPanel(){
         return panel;
     }
